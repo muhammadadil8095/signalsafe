@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Badge } from '@/components/ui/Badge';
+import { InstallPwaButton } from '@/components/InstallPwaButton';
 
 export const DashboardLayout: React.FC = () => {
   const { user, logout, hasRole } = useAuth();
@@ -198,6 +199,7 @@ export const DashboardLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            <InstallPwaButton />
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-navy-900 border border-white/5 text-xs text-slate-400">
               <span className="w-2 h-2 rounded-full bg-cyber-green animate-pulse" />
               <span className="hidden sm:inline">Active Shield Protection</span>

@@ -8,24 +8,53 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'icons.svg', 'robots.txt'],
+      includeAssets: [
+        'favicon.svg',
+        'apple-touch-icon.png',
+        'pwa-192x192.png',
+        'pwa-512x512.png',
+        'pwa-maskable-512x512.png',
+        'icons.svg',
+        'robots.txt',
+        'offline.html',
+      ],
       manifest: {
         name: 'SignalSafe Campus',
         short_name: 'SignalSafe',
-        description: 'AI-Powered Campus Cybersecurity Platform',
+        description: 'AI-Powered Campus Cybersecurity Platform — Your digital safety, one signal ahead.',
         theme_color: '#060812',
         background_color: '#060812',
         display: 'standalone',
+        orientation: 'portrait-primary',
         scope: '/',
         start_url: '/',
+        categories: ['security', 'education', 'utilities'],
         icons: [
           {
+            src: '/pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/pwa-maskable-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+          {
             src: '/favicon.svg',
-            sizes: '192x192 512x512',
+            sizes: 'any',
             type: 'image/svg+xml',
-            purpose: 'any maskable'
-          }
-        ]
+            purpose: 'any',
+          },
+        ],
       },
       workbox: {
         navigateFallback: '/index.html',

@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom';
 import { Shield, Menu, X, ArrowRight, ExternalLink } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
+import { InstallPwaButton } from '@/components/InstallPwaButton';
 
 export const PublicLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -48,6 +49,7 @@ export const PublicLayout: React.FC = () => {
 
           {/* Right Action */}
           <div className="hidden md:flex items-center gap-3">
+            <InstallPwaButton />
             {isAuthenticated ? (
               <Link to="/dashboard">
                 <Button variant="primary" size="sm" icon={<ArrowRight className="w-4 h-4" />}>
@@ -71,7 +73,8 @@ export const PublicLayout: React.FC = () => {
           </div>
 
           {/* Mobile menu button */}
-          <div className="flex md:hidden">
+          <div className="flex items-center gap-2 md:hidden">
+            <InstallPwaButton />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5"
