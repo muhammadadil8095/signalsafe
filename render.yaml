@@ -2,11 +2,13 @@ services:
   - type: web
     name: signalsafe-backend
     runtime: python
-    buildCommand: bash build.sh
-    startCommand: bash start.sh
+    buildCommand: pip install -r requirements.txt && PYTHONPATH=backend python -m app.database.seed
+    startCommand: PYTHONPATH=backend uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
+      - key: PYTHONPATH
+        value: backend
       - key: APP_NAME
         value: SignalSafe Campus
       - key: VT_ENABLED
