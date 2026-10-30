@@ -74,9 +74,9 @@ function clientHeuristicFallback(rawUrl: string): ScanResult {
     });
   }
 
-  // 5. Length checks
+  // 5. Length checks (weightage reduced by 80%: 15 -> 3)
   if (url.length > 80) {
-    score += 15;
+    score += 3;
     signals.push({
       signal_type: 'abnormal_url_length',
       description: `URL length (${url.length} chars) exceeds standard bounds`,

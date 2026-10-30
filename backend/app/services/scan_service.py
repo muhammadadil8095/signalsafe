@@ -276,7 +276,11 @@ def create_url_scan(db: Session, user_id: UUID, url: str) -> ScanHistory:
     }
     for signal in all_signals:
         severity = signal.get("severity", "low")
-        risk_score += severity_weights.get(severity, 10.0)
+        weight = severity_weights.get(severity, 10.0)
+        # Reduce weightage given to long URLs by 80% (retain 20%)
+        if signal.get("signal_type") in ("long_url", "abnormal_url_length"):
+            weight *= 0.2
+        risk_score += weight
 
     # Factor in ML confidence if available
     if ml_available and ml_prediction in ("phishing", "malicious") and ml_confidence is not None:
