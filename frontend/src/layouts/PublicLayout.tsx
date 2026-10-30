@@ -77,6 +77,7 @@ export const PublicLayout: React.FC = () => {
             <InstallPwaButton />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
               className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

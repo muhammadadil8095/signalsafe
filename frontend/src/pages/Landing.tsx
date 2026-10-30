@@ -156,6 +156,7 @@ export const Landing: React.FC = () => {
                 <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
+                  aria-label="URL to test for threats"
                   value={demoUrl}
                   onChange={(e) => setDemoUrl(e.target.value)}
                   placeholder="Paste any link to test (e.g. http://paypal-verify.tk/login)..."
@@ -246,10 +247,10 @@ export const Landing: React.FC = () => {
       {/* Threat Statistics Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
-          <h2 className="text-xs font-mono font-semibold tracking-wider text-cyber-green uppercase">
+          <div className="text-xs font-mono font-semibold tracking-wider text-cyber-green uppercase mb-1">
             Institutional Telemetry
-          </h2>
-          <p className="text-2xl font-bold text-white mt-1">Campus Threat Landscape Metrics</p>
+          </div>
+          <h2 className="text-2xl font-bold text-white">Campus Threat Landscape Metrics</h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {threatStats.map((stat, idx) => (
@@ -265,10 +266,10 @@ export const Landing: React.FC = () => {
       {/* Features Showcase */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-xs font-mono font-semibold tracking-wider text-cyber-cyan uppercase">
+          <div className="text-xs font-mono font-semibold tracking-wider text-cyber-cyan uppercase mb-1">
             Autonomous Protection
-          </h2>
-          <p className="text-3xl sm:text-4xl font-bold text-white mt-2">Comprehensive Campus Threat Defense</p>
+          </div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white">Comprehensive Campus Threat Defense</h2>
           <p className="text-slate-400 mt-3 text-sm">
             Purpose-built detection pipelines replacing fragmented tools with an institutional security mesh.
           </p>
@@ -296,10 +297,10 @@ export const Landing: React.FC = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Card className="p-8 sm:p-12 bg-navy-900/40 border-white/10">
           <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-xs font-mono font-semibold tracking-wider text-cyber-green uppercase">
+            <div className="text-xs font-mono font-semibold tracking-wider text-cyber-green uppercase mb-1">
               Three-Step Lifecycle
-            </h2>
-            <p className="text-2xl sm:text-3xl font-bold text-white mt-1">From Suspicion to Neutralization</p>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">From Suspicion to Neutralization</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
@@ -307,7 +308,7 @@ export const Landing: React.FC = () => {
               <div className="w-10 h-10 rounded-full bg-navy-800 border border-cyber-cyan text-cyber-cyan flex items-center justify-center font-bold text-sm">
                 1
               </div>
-              <h4 className="text-lg font-semibold text-white">Submit or Capture</h4>
+              <h3 className="text-lg font-semibold text-white">Submit or Capture</h3>
               <p className="text-sm text-slate-400">
                 Paste a suspicious URL, scan a campus QR poster using the camera, or forward a dubious message text.
               </p>
@@ -316,7 +317,7 @@ export const Landing: React.FC = () => {
               <div className="w-10 h-10 rounded-full bg-navy-800 border border-cyber-green text-cyber-green flex items-center justify-center font-bold text-sm">
                 2
               </div>
-              <h4 className="text-lg font-semibold text-white">Tri-Engine Fusion</h4>
+              <h3 className="text-lg font-semibold text-white">Tri-Engine Fusion</h3>
               <p className="text-sm text-slate-400">
                 Static heuristic inspectors, 27-feature AI classification, and threat intelligence correlate risk without dangerous execution.
               </p>
@@ -325,7 +326,7 @@ export const Landing: React.FC = () => {
               <div className="w-10 h-10 rounded-full bg-navy-800 border border-purple-400 text-purple-400 flex items-center justify-center font-bold text-sm">
                 3
               </div>
-              <h4 className="text-lg font-semibold text-white">Act & Report</h4>
+              <h3 className="text-lg font-semibold text-white">Act & Report</h3>
               <p className="text-sm text-slate-400">
                 Receive plain-English explanations and recommendations. Escalate with one click to the campus security desk.
               </p>
@@ -337,10 +338,10 @@ export const Landing: React.FC = () => {
       {/* Architecture Overview Diagram */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <h2 className="text-xs font-mono font-semibold tracking-wider text-cyber-cyan uppercase">
+          <div className="text-xs font-mono font-semibold tracking-wider text-cyber-cyan uppercase mb-1">
             Technical Architecture
-          </h2>
-          <p className="text-2xl sm:text-3xl font-bold text-white mt-1">Multi-Tier Threat Pipeline</p>
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">Multi-Tier Threat Pipeline</h2>
         </div>
 
         <Card className="p-6 sm:p-8 bg-navy-950/80 border-white/10 font-mono text-xs overflow-x-auto">
@@ -372,24 +373,30 @@ export const Landing: React.FC = () => {
       {/* FAQ Section */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
-          <h2 className="text-xs font-mono font-semibold tracking-wider text-cyber-green uppercase">FAQ</h2>
-          <p className="text-2xl sm:text-3xl font-bold text-white mt-1">Frequently Asked Questions</p>
+          <div className="text-xs font-mono font-semibold tracking-wider text-cyber-green uppercase mb-1">FAQ</div>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">Frequently Asked Questions</h2>
         </div>
 
         <div className="space-y-4">
           {faqs.map((faq, idx) => {
             const isOpen = activeFaq === idx;
             return (
-              <Card
-                key={idx}
-                className="p-5 cursor-pointer hover:border-white/20 transition-colors"
-                onClick={() => setActiveFaq(isOpen ? null : idx)}
-              >
-                <div className="flex items-center justify-between">
-                  <h4 className="text-base font-semibold text-white">{faq.q}</h4>
-                  {isOpen ? <ChevronUp className="w-5 h-5 text-cyber-green shrink-0" /> : <ChevronDown className="w-5 h-5 text-slate-400 shrink-0" />}
-                </div>
-                {isOpen && <p className="mt-3 text-sm text-slate-300 leading-relaxed animate-in fade-in duration-200">{faq.a}</p>}
+              <Card key={idx} className="overflow-hidden hover:border-white/20 transition-colors">
+                <button
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={`faq-answer-${idx}`}
+                  className="w-full text-left p-5 flex items-center justify-between"
+                  onClick={() => setActiveFaq(isOpen ? null : idx)}
+                >
+                  <h3 className="text-base font-semibold text-white">{faq.q}</h3>
+                  {isOpen ? <ChevronUp className="w-5 h-5 text-cyber-green shrink-0 ml-4" /> : <ChevronDown className="w-5 h-5 text-slate-400 shrink-0 ml-4" />}
+                </button>
+                {isOpen && (
+                  <div id={`faq-answer-${idx}`} className="px-5 pb-5 pt-1 text-sm text-slate-300 leading-relaxed border-t border-white/5 animate-in fade-in duration-200">
+                    {faq.a}
+                  </div>
+                )}
               </Card>
             );
           })}

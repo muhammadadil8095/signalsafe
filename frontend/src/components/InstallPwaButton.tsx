@@ -60,6 +60,7 @@ export const InstallPwaButton: React.FC<{ className?: string }> = ({ className =
     <>
       <button
         onClick={handleInstallClick}
+        aria-label="Install SignalSafe Campus Progressive Web App"
         title="Install SignalSafe Campus as a Progressive Web App"
         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-cyber-green/10 text-cyber-green border border-cyber-green/30 hover:bg-cyber-green/20 hover:border-cyber-green transition-all shadow-sm ${className}`}
       >
@@ -73,6 +74,7 @@ export const InstallPwaButton: React.FC<{ className?: string }> = ({ className =
           <div className="bg-navy-900 border border-cyber-cyan/30 rounded-2xl p-6 max-w-sm w-full text-slate-100 shadow-2xl relative">
             <button
               onClick={() => setShowIOSModal(false)}
+              aria-label="Close installation instructions dialog"
               className="absolute top-4 right-4 text-slate-400 hover:text-white"
             >
               <X className="w-5 h-5" />

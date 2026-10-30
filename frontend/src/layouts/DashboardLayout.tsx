@@ -76,6 +76,7 @@ export const DashboardLayout: React.FC = () => {
           </Link>
           <button
             onClick={() => setSidebarOpen(false)}
+            aria-label="Close sidebar menu"
             className="p-1 rounded-md text-slate-400 hover:text-white lg:hidden"
           >
             <X className="w-5 h-5" />
@@ -185,6 +186,7 @@ export const DashboardLayout: React.FC = () => {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setSidebarOpen(true)}
+              aria-label="Open sidebar menu"
               className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 lg:hidden"
             >
               <Menu className="w-5 h-5" />
