@@ -89,9 +89,9 @@ export const MessageAnalysis: React.FC = () => {
           </div>
         </form>
 
-        {/* Demo Example Buttons */}
+        {/* Real Incident Presets */}
         <div className="mt-4 pt-3 border-t border-grid/10 space-y-2">
-          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">Load Demonstration Presets:</div>
+          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">Load Incident Vector Presets:</div>
           <div className="flex flex-wrap gap-2">
             {sampleMessages.map((sample, idx) => (
               <button

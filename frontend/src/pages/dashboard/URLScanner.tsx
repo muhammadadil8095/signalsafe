@@ -68,30 +68,30 @@ export const URLScanner: React.FC = () => {
             required
           />
 
-          {/* Quick Demo Pre-fills */}
-          <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono pt-1 border-t border-[#1A231E]/20">
-            <span className="text-[#0D1F17] font-semibold">TEST PRESETS:</span>
+          {/* Test Presets */}
+          <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono pt-1 border-t border-grid/20">
+            <span className="text-forest font-semibold">PRESET TARGETS:</span>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => setUrl('http://paypal-security-update.tk/login.php')}
-                className="text-[#7F1D1D] bg-[#FECACA] border border-[#7F1D1D] px-2 py-0.5 rounded-sm hover:underline font-mono"
+                onClick={() => setUrl('http://campus-portal-auth.edu.verify-session.xyz/login')}
+                className="text-[#7F1D1D] bg-[#FECACA] dark:bg-[#3D1414] dark:text-[#FCA5A5] border border-[#7F1D1D] px-2 py-0.5 rounded-sm hover:underline font-mono"
               >
-                [Phishing .TK]
+                [Spear-Phishing Vector]
               </button>
               <button
                 type="button"
-                onClick={() => setUrl('https://harvard.edu/academics/courses')}
-                className="text-[#064E3B] bg-[#A7F3D0] border border-[#064E3B] px-2 py-0.5 rounded-sm hover:underline font-mono"
+                onClick={() => setUrl('https://portal.campus.edu/student-hub')}
+                className="text-[#064E3B] bg-[#A7F3D0] dark:bg-[#064E3B]/40 dark:text-[#6EE7B7] border border-[#064E3B] px-2 py-0.5 rounded-sm hover:underline font-mono"
               >
-                [Legitimate .EDU]
+                [Official Campus Portal]
               </button>
               <button
                 type="button"
-                onClick={() => setUrl('http://192.168.1.1:8080/verify-account')}
-                className="text-[#78350F] bg-[#FDE68A] border border-[#78350F] px-2 py-0.5 rounded-sm hover:underline font-mono"
+                onClick={() => setUrl('http://192.168.104.22:8080/payroll/direct-deposit.php')}
+                className="text-[#78350F] bg-[#FDE68A] dark:bg-[#451A03]/50 dark:text-[#FCD34D] border border-[#78350F] px-2 py-0.5 rounded-sm hover:underline font-mono"
               >
-                [IP Host Vector]
+                [Unauthenticated IP Vector]
               </button>
             </div>
           </div>

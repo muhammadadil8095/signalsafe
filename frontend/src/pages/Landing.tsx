@@ -190,7 +190,7 @@ export const Landing: React.FC = () => {
                   aria-label="URL to test for threats"
                   value={demoUrl}
                   onChange={(e) => setDemoUrl(e.target.value)}
-                  placeholder="Paste URL (e.g. http://paypal-security-update.tk/login.php)..."
+                  placeholder="Paste URL (e.g. http://campus-portal-auth.edu.verify-session.xyz/login)..."
                   className="w-full bg-paper border border-grid/20 rounded-sm pl-10 pr-3.5 py-2.5 text-xs font-mono text-forest placeholder:text-grid/40 focus:outline-none focus:border-forest shadow-none"
                 />
               </div>
@@ -199,20 +199,20 @@ export const Landing: React.FC = () => {
               </Button>
             </form>
 
-            {/* Quick Demo Pre-fill suggestions */}
+            {/* Real Threat Presets */}
             <div className="mt-3 flex flex-wrap items-center justify-between text-[11px] font-mono text-forest/60 pt-2 border-t border-grid/10">
               <span>PRESETS:</span>
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => setDemoUrl('http://paypal-security-update.tk/login.php')}
+                  onClick={() => setDemoUrl('http://campus-portal-auth.edu.verify-session.xyz/login')}
                   className="text-coral hover:underline font-mono"
                 >
                   [Phishing Vector]
                 </button>
                 <button
                   type="button"
-                  onClick={() => setDemoUrl('https://harvard.edu/academics/courses')}
+                  onClick={() => setDemoUrl('https://portal.campus.edu/student-hub')}
                   className="text-forest hover:underline font-mono font-semibold"
                 >
                   [Legitimate Vector]

@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '@/context/AuthContext';
+import { ThemeProvider } from '@/context/ThemeContext';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 
 import { PublicLayout } from '@/layouts/PublicLayout';
@@ -51,12 +52,13 @@ const RouteLoader: React.FC = () => (
 export const App: React.FC = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
-          <SwUpdateNotification />
-          <ConnectionStatus />
-          <Suspense fallback={<RouteLoader />}>
-            <Routes>
+      <ThemeProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <SwUpdateNotification />
+            <ConnectionStatus />
+            <Suspense fallback={<RouteLoader />}>
+              <Routes>
               {/* Public Marketing & Info Pages */}
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Landing />} />
@@ -102,7 +104,8 @@ export const App: React.FC = () => {
           </Suspense>
         </BrowserRouter>
       </AuthProvider>
-    </QueryClientProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
   );
 };
 

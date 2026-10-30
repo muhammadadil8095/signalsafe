@@ -21,6 +21,7 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { Badge } from '@/components/ui/Badge';
 import { InstallPwaButton } from '@/components/InstallPwaButton';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export const DashboardLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -193,6 +194,7 @@ export const DashboardLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <InstallPwaButton />
             <div className="flex items-center gap-2 px-2.5 py-1 rounded-sm bg-white border border-grid/20 text-[11px] font-mono text-forest">
               <span className="w-1.5 h-1.5 rounded-full bg-forest" />

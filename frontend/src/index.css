@@ -135,4 +135,116 @@
     background: none;
     -webkit-text-fill-color: initial;
   }
+
+  /* --- Multi-Theme: Dark Mode Architecture --- */
+  .dark {
+    --background: #0B110D;
+    --foreground: #E8ECE9;
+    --border: rgba(255, 255, 255, 0.18);
+  }
+
+  .dark body {
+    background-color: #0B110D;
+    color: #E8ECE9;
+  }
+
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+    color: #F0F4F1 !important;
+  }
+
+  .dark .bg-paper {
+    background-color: #0B110D !important;
+  }
+
+  .dark .bg-paper-light {
+    background-color: #111A14 !important;
+  }
+
+  .dark .bg-paper-muted {
+    background-color: #17231B !important;
+  }
+
+  .dark .bg-white {
+    background-color: #121C16 !important;
+  }
+
+  .dark .text-forest {
+    color: #E8ECE9 !important;
+  }
+
+  .dark .text-forest\/80,
+  .dark .text-forest\/70 {
+    color: #CBD4CE !important;
+  }
+
+  .dark .text-forest\/60,
+  .dark .text-forest\/50 {
+    color: #9AA79F !important;
+  }
+
+  .dark .border-grid\/20,
+  .dark .border-grid\/10,
+  .dark .border-grid\/30 {
+    border-color: rgba(255, 255, 255, 0.16) !important;
+  }
+
+  .dark .hairline-border,
+  .dark .hairline-b,
+  .dark .hairline-t,
+  .dark .hairline-r,
+  .dark .hairline-l {
+    border-color: rgba(255, 255, 255, 0.18) !important;
+  }
+
+  .dark .technical-card {
+    background-color: #121C16 !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+  }
+
+  .dark .technical-panel {
+    background-color: #17231B !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+  }
+
+  .dark .paper-grid {
+    background-color: #0B110D !important;
+    background-image: 
+      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px) !important;
+  }
+
+  .dark input,
+  .dark textarea,
+  .dark select {
+    background-color: #0E1611 !important;
+    color: #E8ECE9 !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+  }
+
+  .dark input::placeholder,
+  .dark textarea::placeholder {
+    color: rgba(255, 255, 255, 0.35) !important;
+  }
+
+  /* --- QR Scanner Hardware Viewport Styles --- */
+  #qr-reader-container {
+    border: none !important;
+    background: transparent !important;
+  }
+
+  #qr-reader-container video {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+    border-radius: 2px !important;
+  }
+
+  #qr-reader-container__scan_region {
+    background: transparent !important;
+  }
+
+  #qr-reader-container__dashboard {
+    display: none !important;
+  }
 }

@@ -4,6 +4,7 @@ import { Shield, Menu, X, ArrowRight, ExternalLink } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/Button';
 import { InstallPwaButton } from '@/components/InstallPwaButton';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export const PublicLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -50,6 +51,7 @@ export const PublicLayout: React.FC = () => {
 
           {/* Right Action */}
           <div className="hidden md:flex items-center gap-3">
+            <ThemeToggle />
             <InstallPwaButton />
             <Link to="/scan">
               <Button variant="outline" size="sm" icon={<Shield className="w-3.5 h-3.5" />}>
@@ -80,6 +82,7 @@ export const PublicLayout: React.FC = () => {
 
           {/* Mobile menu button */}
           <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle compact />
             <InstallPwaButton />
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

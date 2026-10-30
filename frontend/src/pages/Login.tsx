@@ -101,10 +101,10 @@ export const Login: React.FC = () => {
         </Button>
       </form>
 
-      {/* Quick 1-Click Demo Logins for Judges / Evaluators */}
+      {/* 1-Click Accounts */}
       <div className="mt-6 pt-4 border-t border-[#1A231E]/40 space-y-3">
         <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest font-bold text-center">
-          1-Click Evaluator Access (Immediate Login)
+          1-Click Institutional Access
         </div>
         <div className="grid grid-cols-3 gap-2">
           <Button
