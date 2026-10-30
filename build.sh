@@ -12,3 +12,4 @@ if [ -d "backend/app" ]; then
 else
     python -m app.database.seed
 fi
+
