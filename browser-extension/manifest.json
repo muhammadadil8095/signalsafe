@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "SignalSafe Browser Guardian",
   "short_name": "SignalSafe",
-  "version": "1.0.0",
-  "description": "Scan the current tab with SignalSafe Campus. User-triggered analysis — not first-request blocking.",
+  "version": "1.1.0",
+  "description": "Automatic real-time website threat detection and malicious URL warning system for campus safety.",
   "icons": {
     "16": "icons/icon-16.png",
     "32": "icons/icon-32.png",
@@ -23,8 +23,16 @@
     "service_worker": "src/background/service-worker.ts",
     "type": "module"
   },
-  "permissions": ["storage", "activeTab", "scripting", "tabs"],
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs",
+    "webNavigation",
+    "declarativeNetRequest"
+  ],
   "host_permissions": [
+    "https://signalsafe.onrender.com/*",
     "http://127.0.0.1:8000/*",
     "http://localhost:8000/*"
   ],

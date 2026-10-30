@@ -27,3 +27,4 @@ export const ThemeToggle: React.FC<{ compact?: boolean }> = ({ compact = false }
     </button>
   );
 };
+

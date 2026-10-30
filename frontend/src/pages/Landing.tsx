@@ -47,10 +47,10 @@ export const Landing: React.FC = () => {
         prediction: isSuspicious ? 'malicious' : 'safe',
         signals: isSuspicious
           ? [
-              { signal_type: 'suspicious_tld', description: 'Domain suffix has heightened abuse rate (.tk / .xyz)', severity: 'high', source: 'heuristic' },
-              { signal_type: 'credential_path', description: 'Deceptive credential ingestion path detected', severity: 'high', source: 'heuristic' },
-              { signal_type: 'ml_phishing_detected', description: 'AI classifier flagged lexical structure (98.4% confidence)', severity: 'critical', source: 'ml' },
-            ]
+            { signal_type: 'suspicious_tld', description: 'Domain suffix has heightened abuse rate (.tk / .xyz)', severity: 'high', source: 'heuristic' },
+            { signal_type: 'credential_path', description: 'Deceptive credential ingestion path detected', severity: 'high', source: 'heuristic' },
+            { signal_type: 'ml_phishing_detected', description: 'AI classifier flagged lexical structure (98.4% confidence)', severity: 'critical', source: 'ml' },
+          ]
           : [],
         explanation: isSuspicious
           ? ['High probability of unauthorized credential harvesting infrastructure.']

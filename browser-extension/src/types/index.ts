@@ -121,24 +121,35 @@ export interface OverlayPayload {
   url: string;
   explanation: string[];
   scanId: string;
+  riskScore?: number;
+  recommendations?: string[];
 }
 
 export type GuardianMessage =
-  | { type: "GET_STATE" }
+  | { type: "GET_STATE"; tabId?: number }
   | { type: "LOGIN"; email: string; password: string; baseUrl: string }
   | { type: "LOGOUT" }
   | { type: "SET_BASE_URL"; baseUrl: string }
+  | { type: "SET_AUTO_PROTECTION"; enabled: boolean }
   | { type: "SCAN_CURRENT_TAB" }
   | { type: "REPORT_URL"; scanId: string; incidentType?: string }
-  | { type: "OPEN_WARNING"; scanId: string }
-  | { type: "SAFE_RETURN"; tabId: number }
+  | { type: "OPEN_WARNING"; scanId: string; riskLevel?: string; url?: string }
+  | { type: "SAFE_RETURN"; tabId?: number }
+  | { type: "CONTINUE_ANYWAY"; url: string; tabId?: number }
   | { type: "CLEAR_SCAN" };
+
+export interface CachedScanEntry {
+  scan: ScanResponse;
+  timestamp: number;
+}
 
 export interface GuardianState {
   phase: PopupPhase;
   baseUrl: string;
   user: User | null;
   authenticated: boolean;
+  autoProtection: boolean;
+  backendOnline: boolean;
   tab: TabInfo | null;
   scan: ScanResponse | null;
   error: string | null;
@@ -152,6 +163,9 @@ export interface GuardianResponse {
   error?: string;
 }
 
-export const DEFAULT_BASE_URL = "http://127.0.0.1:8000";
+export const DEFAULT_BASE_URL = "https://signalsafe.onrender.com";
+export const DEPLOYED_FRONTEND_URL = "https://signalsafe.vercel.app";
 export const API_PREFIX = "/api/v1";
 export const REQUEST_TIMEOUT_MS = 28_000;
+export const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes
+export const MAX_CACHE_ENTRIES = 100;

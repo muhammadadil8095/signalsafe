@@ -20,6 +20,22 @@ export function isUnavailable(error: unknown): boolean {
   return error instanceof ApiError && (error.code === "timeout" || error.code === "network");
 }
 
+export async function checkBackendHealth(baseUrl: string): Promise<boolean> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 6000);
+  try {
+    const res = await fetch(`${baseUrl.replace(/\/+$/, "")}/health`, {
+      method: "GET",
+      signal: controller.signal,
+    });
+    return res.ok;
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 export async function ensureHostPermission(baseUrl: string): Promise<void> {
   const origin = `${originFromBaseUrl(baseUrl)}/*`;
   const already = await chrome.permissions.contains({ origins: [origin] });

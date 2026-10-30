@@ -1,127 +1,148 @@
-# SignalSafe Browser Guardian
+# SignalSafe Guardian — Browser Security Extension
 
-Manifest V3 extension for Chrome and Microsoft Edge. It is a trusted client of the existing SignalSafe Campus FastAPI backend. It does **not** run VirusTotal or the ML model locally, and it does **not** block the first network request to a website.
+Manifest V3 extension for Google Chrome and Microsoft Edge. SignalSafe Guardian is an automated, real-time website threat detection client designed for the SignalSafe Campus security platform.
 
-## What it does
+It communicates with the deployed FastAPI backend at `https://signalsafe.onrender.com` (or a custom local/self-hosted instance) without requiring local backend setup or storing API keys or user credentials in the extension bundle.
 
-1. Sign in with a SignalSafe Campus account (`POST /api/v1/auth/login`).
-2. Read the current tab URL after you click the toolbar icon.
-3. Send that URL to `POST /api/v1/scans/url` with `Authorization: Bearer <access_token>`.
-4. Display the backend `ScanResponse` fields as returned.
-5. If the result is `suspicious` or `malicious`, open an extension warning page and optionally overlay the tab.
+---
 
-It never auto-navigates to a URL you submitted for scanning.
+## What It Does
 
-## Install (unpacked)
+1. **Automatic Navigation Detection**: Listens to top-level page navigations via `chrome.webNavigation.onCompleted` (`frameId === 0`).
+2. **Real-Time Threat Analysis**: Automatically submits completed HTTP/HTTPS URLs to the FastAPI backend (`POST /api/v1/scans/url`) using stored JWT authentication.
+3. **Immediate Threat Interstitial**:
+   - **Malicious**: Immediately redirects the affected tab to the SignalSafe warning page (`src/pages/warning.html`) with red danger alert, threat score, explanations, safe return action, and incident reporting.
+   - **Suspicious**: Mounts a prominent caution banner and shadow-DOM overlay with "Return to Safety", "Continue Anyway", and "Report to Campus Security".
+   - **Safe**: Allows browsing without interruption, updating the toolbar popup badge with green clean telemetry.
+   - **Inconclusive / Offline**: Displays transparent verification status without falsely certifying safety.
+4. **Repeat-Visit Protection**: Automatically registers Manifest V3 `declarativeNetRequest` dynamic rules for previously confirmed malicious domains, redirecting repeat visits directly to the warning screen.
+5. **Configurable Protection Toggle**: Enables one-click toggling between **Protection ON** (real-time automated scanning) and **Protection OFF** (manual scan only).
 
-Build first (see below), then load `browser-extension/dist`.
+---
 
-### Chrome
+## Installation (Unpacked)
 
-1. Open `chrome://extensions`.
-2. Enable **Developer mode**.
-3. Click **Load unpacked**.
-4. Select `browser-extension/dist`.
-
-### Microsoft Edge
-
-1. Open `edge://extensions`.
-2. Enable **Developer mode**.
-3. Click **Load unpacked**.
-4. Select `browser-extension/dist`.
-
-After code changes, run `npm run build` again and click **Reload** on the extension card.
-
-## Development
-
+### Step 1: Build the Extension
 ```bash
 cd browser-extension
 npm install
-python scripts/make-icons.py
 npm test
+npm run typecheck
 npm run build
 ```
+The production bundle is generated in `browser-extension/dist`.
 
-`npm run dev` starts the CRX/Vite watch build. Reload the unpacked extension after it rebuilds.
+### Step 2: Load in Chrome
+1. Open Chrome and navigate to `chrome://extensions`.
+2. Turn on **Developer mode** (toggle in upper right).
+3. Click **Load unpacked** (upper left button).
+4. Select the folder: `browser-extension/dist`.
 
-## Backend configuration
+### Step 3: Load in Microsoft Edge
+1. Open Edge and navigate to `edge://extensions`.
+2. Turn on **Developer mode** (left sidebar).
+3. Click **Load unpacked**.
+4. Select the folder: `browser-extension/dist`.
 
-Default base URL: `http://127.0.0.1:8000` (API prefix `/api/v1` is appended by the extension).
+---
 
-1. Start SignalSafe Campus (typically `docker compose up` or the FastAPI app on port 8000).
-2. Open the popup.
-3. Set **Backend base URL** to your API origin (no trailing `/api`).
-4. Sign in with a real campus account. Demo passwords are not bundled in the extension.
+## Backend Configuration
 
-If you point at a non-localhost origin, Chrome will prompt for extra host permission for that origin only.
+### Production Deployed Server (Default)
+The extension defaults to the deployed production backend:
+```
+https://signalsafe.onrender.com
+```
 
-### Endpoints used
+### Local Development Server (Optional)
+If running the backend locally:
+```
+http://127.0.0.1:8000
+```
+Open the Guardian popup, click the ⚙ icon in the footer, update the **Backend Base URL**, and save.
 
-| Action | Method | Path |
-|---|---|---|
-| Login | POST | `/api/v1/auth/login` |
-| Refresh | POST | `/api/v1/auth/refresh` |
-| Session check | GET | `/api/v1/auth/me` |
-| URL scan | POST | `/api/v1/scans/url` body `{ "url": "https://..." }` |
-| Report URL | POST | `/api/v1/reports/` |
+---
 
-Scan display fields come from `ScanResponse` in `backend/app/schemas/scan.py`: `original_input`, `normalized_url`, `domain`, `risk_level`, `risk_score`, `ml_available`, `ml_prediction`, `ml_confidence`, `vt_available`, `vt_malicious`, `vt_suspicious`, `vt_undetected`, `signals`, `explanation`, `recommendations`, `scanned_at`.
+## Architecture & Automated Scanning Workflow
 
-## Authentication
+```
+[User Navigates in Tab] 
+       │
+       ▼
+[chrome.webNavigation.onCompleted] (frameId === 0)
+       │
+       ├── Check: Automatic Protection Enabled? ──(No)──► [Exit]
+       ├── Check: User Authenticated? ────────────(No)──► [Exit]
+       ├── Check: Eligible HTTP/HTTPS URL? ───────(No)──► [Exit (chrome://, extension://, etc.)]
+       ├── Check: In Bypassed URLs List? ─────────(Yes)─► [Exit (user clicked Continue Anyway)]
+       └── Check: Duplicate In-Flight Scan? ──────(Yes)─► [Exit (already scanning)]
+       │
+       ▼
+[Check Local Scan Cache (TTL 10m)] ──(Hit)──► [Use Cached Verdict]
+       │ (Miss)
+       ▼
+[POST /api/v1/scans/url] (with Bearer Token & 28s timeout)
+       │
+       ▼
+[Race Condition Check: Did tab navigate elsewhere?] ──(Yes)──► [Discard Stale Result]
+       │ (No, tab still on target URL)
+       ▼
+   Verdict:
+   ├── MALICIOUS ──► [Replace Tab with warning.html] & [Add DNR Dynamic Rule]
+   ├── SUSPICIOUS ─► [Mount Shadow-DOM Caution Overlay] & [Offer Continue Anyway]
+   ├── SAFE ───────► [No Interruption, update Tab State to SAFE]
+   └── OFFLINE ────► [Record Unverified Status, Never Certify as Safe]
+```
 
-- Tokens are stored in `chrome.storage.local` and used only by the service worker, popup, and extension warning page.
-- Content scripts never receive JWTs and never read token keys.
-- On HTTP 401 the extension tries `POST /api/v1/auth/refresh`. Failure shows the **authentication expired** state.
-- Sign out clears tokens and the last scan.
+---
 
-## Permissions
+## Permissions Explained
 
-| Permission | Why |
+| Permission | Purpose |
 |---|---|
-| `storage` | Backend URL, session tokens, last scan (trusted contexts only). |
-| `activeTab` | Current tab URL and optional overlay injection after you click the action. |
-| `tabs` | Open the warning page; safe-return (`tabs.goBack` / New Tab). Does not grant reading every site’s content. |
-| `scripting` | Inject the warning overlay into the scanned tab after a high-risk result. |
-| Host: `http://127.0.0.1:8000/*`, `http://localhost:8000/*` | Default local FastAPI origin. |
-| Optional host permissions | Requested only when you set a different backend origin. |
+| `webNavigation` | Detects completed top-level frame navigations on HTTP/HTTPS websites (`frameId === 0`). |
+| `storage` | Persists session tokens, backend URL, protection toggle setting, tab scan cache, and bypass list in `chrome.storage.local`. |
+| `tabs` | Reads active tab URL, redirects flagged malicious tabs to warning page, and executes safe return. |
+| `scripting` | Mounts shadow-DOM caution overlay for suspicious websites without exposing tokens to page DOM. |
+| `activeTab` | Grants temporary execution permission on the user-active tab. |
+| `declarativeNetRequest` | Enforces instant redirect rules on subsequent or repeated visits to previously confirmed malicious destinations. |
+| Host: `https://signalsafe.onrender.com/*` | Pre-approved origin permission for the production campus backend. |
+| Host: `http://127.0.0.1:8000/*`, `http://localhost:8000/*` | Pre-approved origin permissions for local backend debugging. |
 
-The extension does **not** use `webRequest` blocking or Manifest V2 APIs.
+---
 
-## Security model
+## Security Model
 
-- No secrets, VirusTotal keys, or demo credentials in the bundle.
-- No collection of page passwords, form fields, or arbitrary DOM content.
-- Overlay payload is a sanitized subset: risk level, domain, URL, explanations, scan id.
-- Input validation rejects `chrome:`, `edge:`, `file:`, and non-http(s) URLs.
-- API calls use a timeout (28s) and typed error states (`backend unavailable`, `authentication expired`).
-- The warning page reads the stored `ScanResponse`; it does not fetch the submitted site.
+- **Zero Credential Exposure**: Tokens (`access_token`, `refresh_token`) reside strictly in trusted extension background storage (`chrome.storage.local`). Content scripts and page DOMs never receive or access JWT tokens.
+- **No Content Harvesting**: The extension never reads form fields, passwords, cookies, or page DOM contents.
+- **Closed Shadow-DOM**: Threat overlays use `mode: "closed"` to prevent host pages from tampering with security alerts.
+- **HTML Sanitization**: All backend responses and URLs are escaped before rendering.
+- **No First-Request False Claims**: Manifest V3 cannot pause the initial TCP connection before an async API scan completes. The extension honestly redirects as soon as the verdict arrives, and registers DNR rules for repeat-visit protection.
 
-## Current limitations
+---
 
-- **User-triggered only.** Opening a site still loads it. Clicking Scan runs after the fact.
-- Asynchronous VirusTotal / ML work on the server cannot intercept the first HTTP request.
-- Overlay injection can fail on some Chrome-restricted pages; the extension warning page is the guaranteed surface.
-- `activeTab` access is tied to invoking the extension. Reload the popup on the tab you intend to scan.
-- Access tokens follow the backend TTL (default 30 minutes) with refresh-token renewal.
+## Testing & Quality Assurance
 
-## Future proactive blocking (roadmap)
-
-If you add blocking later, use Manifest V3 `declarativeNetRequest` **dynamic rules** for URLs already classified malicious by SignalSafe:
-
-1. After a malicious `ScanResponse`, add a `block` or `redirect` rule for that exact URL or hostname.
-2. Persist a small allow/block list in `chrome.storage.local`.
-3. Redirect matches to the extension warning page — still after at least one prior classification.
-
-Limitations to keep in the product copy:
-
-- Rules cannot classify a brand-new URL before the first visit.
-- `declarativeNetRequest` cannot wait on an async API call during the request.
-- Broad `<all_urls>` blocking is easy to get wrong and is not enabled in this release.
-
-## Tests
-
+To execute the automated test suite:
 ```bash
 npm test
 ```
+To run TypeScript strict type checking:
+```bash
+npm run typecheck
+```
+To build production artifacts:
+```bash
+npm run build
+```
 
-Unit tests cover URL allow/deny rules and high-risk mapping. Manual checks: login, logout, expired token, current-tab URL, safe scan, malicious/suspicious scan, API stopped, warning page, no auto-navigation to the submitted URL.
+Unit tests cover:
+- Automatic navigation scanning triggers & eligibility
+- Duplicate scan prevention for concurrent in-flight requests
+- Multi-tab isolation and per-tab scan storage
+- Fast navigation race conditions & stale response discarding
+- Scan cache TTL expiry and LRU bounds
+- URL scheme sanitization & self-URL filtering
+- Bypassed URL tracking for "Continue Anyway"
+- Incident reporting payloads
+- Authentication inputs & API error status parsing
