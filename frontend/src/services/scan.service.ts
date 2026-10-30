@@ -98,39 +98,45 @@ function clientHeuristicFallback(rawUrl: string): ScanResult {
     risk_score: parseFloat(score.toFixed(1)),
     risk_level,
     prediction: risk_level,
-    ml_available: true,
-    ml_prediction: risk_level,
-    ml_confidence: parseFloat((0.85 + Math.random() * 0.14).toFixed(3)),
+    ml_available: false,
+    ml_prediction: null,
+    ml_confidence: null,
     vt_available: false,
-    vt_malicious: risk_level === 'malicious' ? 14 : 0,
-    vt_suspicious: risk_level === 'suspicious' ? 3 : 0,
-    vt_undetected: 68,
+    vt_malicious: 0,
+    vt_suspicious: 0,
+    vt_undetected: 0,
     signals,
     explanation: [
-      `Fused heuristic assessment evaluated structural entropy, domain characteristics, and token distribution.`,
+      `Client-side static heuristic assessment (Local Evaluation Mode).`,
+      `NOTE: Machine learning classifiers and threat telemetry require an active backend connection. This is a preliminary structural check, not a verified offline certification.`,
       signals.length === 0
-        ? `No anomalous threat indicators identified.`
-        : `${signals.length} threat signal(s) recorded across lexical and domain evaluation vectors.`,
+        ? `Zero structural anomaly flags triggered in lexical tokens.`
+        : `${signals.length} structural heuristic indicator(s) identified.`,
     ],
     recommendations:
       risk_level === 'malicious'
         ? [
             'CRITICAL: Do NOT submit credentials or personal data to this site.',
-            'Report this threat incident to campus IT Security immediately.',
-            'If opened on university workstation, perform endpoint isolation.',
+            'Report this threat incident to campus IT Security once network connection is restored.',
           ]
         : risk_level === 'suspicious'
         ? [
-            'Exercise heightened caution before submitting campus authentication data.',
-            'Verify sender domain via institutional address book.',
+            'Exercise heightened caution. Verify sender domain via institutional phone directory.',
           ]
-        : ['URL conforms to recognized structural security standards.'],
+        : ['Preliminary lexical structure conforms to web standards. Live threat verification requires backend connectivity.'],
     scanned_at: new Date().toISOString(),
   };
 }
 
 export const scanService = {
   async scanURL(url: string): Promise<ScanResult> {
+    // Explicit offline check: live threat analysis requires connectivity
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+      throw new Error(
+        'Offline: Live threat analysis requires an active network connection to query the security backend and AI classification pipeline. Please reconnect to scan.'
+      );
+    }
+
     try {
       // Ensure demo authentication if user has no token
       if (!localStorage.getItem('signalsafe_token')) {
@@ -150,8 +156,11 @@ export const scanService = {
 
       const res = await api.post<ScanResult>('/scans/url', { url });
       return res.data;
-    } catch (err) {
-      // Fallback to client-side heuristic analyzer so user is never blocked
+    } catch (err: any) {
+      if (err.message && err.message.startsWith('Offline:')) {
+        throw err;
+      }
+      // If server is unreachable but device is online, fallback to client heuristic with explicit disclaimer
       return clientHeuristicFallback(url);
     }
   },

@@ -130,6 +130,15 @@ export const QRScanner: React.FC = () => {
 
       {cameraError && <Alert type="warning" message={cameraError} />}
 
+      {typeof window !== 'undefined' && !window.isSecureContext && (
+        <div className="p-3 bg-[#FEF9E6] border border-[#F4D35E] rounded-sm text-xs font-mono text-[#7A6200] flex items-start gap-2">
+          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+          <span>
+            <strong>HTTPS Notice:</strong> Mobile browsers restrict camera hardware access to HTTPS origins or localhost. When evaluating via a local LAN IP, use the <strong>Upload Image / Screenshot</strong> tab below.
+          </span>
+        </div>
+      )}
+
       {/* Tabs */}
       <div className="flex border-b border-grid/20 gap-4">
         <button

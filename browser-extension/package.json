@@ -1,0 +1,31 @@
+{
+  "name": "signalsafe-browser-guardian",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "SignalSafe Browser Guardian — Manifest V3 client for the SignalSafe Campus scan API.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource/red-hat-mono": "^5.2.5",
+    "@fontsource/red-hat-text": "^5.2.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0",
+    "@types/chrome": "^0.0.270",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^25.0.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
+  }
+}

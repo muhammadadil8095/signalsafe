@@ -3,79 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#E8E9E5">
   <title>Offline — SignalSafe Campus</title>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      background-color: #060812;
-      color: #f1f5f9;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #E8E9E5;
+      color: #0D1F17;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      margin: 0;
       padding: 1.5rem;
       text-align: center;
     }
     .badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-family: monospace;
-      color: #00d4ff;
-      background: rgba(0, 212, 255, 0.1);
-      border: 1px solid rgba(0, 212, 255, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.85rem;
+      border-radius: 2px;
+      font-size: 0.7rem;
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 600;
+      color: #0D1F17;
+      background: #DDDFDA;
+      border: 1px solid rgba(26, 35, 30, 0.45);
       margin-bottom: 1.5rem;
     }
-    h1 {
-      font-size: 1.75rem;
-      margin: 0 0 0.5rem 0;
+    .badge .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #E15A3E;
+      display: inline-block;
     }
-    p {
-      color: #94a3b8;
-      font-size: 0.95rem;
+    h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0 0 0.5rem 0;
+      color: #0D1F17;
+    }
+    .subtitle {
+      color: #2F3E35;
+      font-size: 0.9rem;
       max-width: 28rem;
       line-height: 1.6;
     }
     .card {
-      background: rgba(17, 24, 50, 0.8);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 0.75rem;
+      background: #FFFFFF;
+      border: 1px solid rgba(26, 35, 30, 0.45);
+      border-radius: 2px;
       padding: 1.25rem;
       margin-top: 2rem;
       max-width: 24rem;
       text-align: left;
+      width: 100%;
     }
     .card h3 {
-      font-size: 0.875rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       margin-top: 0;
-      color: #00ff88;
+      color: #0D1F17;
+      font-weight: 700;
     }
     .card ul {
-      margin: 0.5rem 0 0 1rem;
+      margin: 0.75rem 0 0 1rem;
       padding: 0;
       font-size: 0.8rem;
-      color: #cbd5e1;
+      color: #1F2E25;
+      line-height: 1.7;
+    }
+    .card li { margin-bottom: 0.25rem; }
+    .security-note {
+      margin-top: 2rem;
+      padding: 1rem 1.25rem;
+      background: #FECACA;
+      border: 1px solid #7F1D1D;
+      border-radius: 2px;
+      max-width: 24rem;
+      width: 100%;
+      text-align: left;
+    }
+    .security-note h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #7F1D1D;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+    .security-note p {
+      font-size: 0.8rem;
+      color: #7F1D1D;
       line-height: 1.5;
     }
+    .retry-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      padding: 0.6rem 1.5rem;
+      background: #102B1E;
+      color: #FFFFFF;
+      border: 1px solid #0A1B13;
+      border-radius: 2px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .retry-btn:hover { background: #1B4530; }
   </style>
 </head>
 <body>
-  <div class="badge">SIGNALSAFE CAMPUS PWA</div>
-  <h1>You are currently offline</h1>
-  <p>Internet connectivity is required to run live cloud scans and query the campus threat radar.</p>
+  <div class="badge"><span class="dot"></span> SIGNALSAFE // OFFLINE</div>
+  <h1>No Network Connection</h1>
+  <p class="subtitle">
+    Live threat analysis requires an active network connection to query the campus security API and AI classification pipeline.
+  </p>
 
   <div class="card">
     <h3>Offline Safety Guidelines</h3>
     <ul>
       <li>Do not open unknown attachments received while offline.</li>
-      <li>Never enter campus passwords or SSNs into unverified forms.</li>
+      <li>Never enter campus credentials into unverified forms.</li>
       <li>Do not trust urgent payment notices claiming account suspension.</li>
-      <li>Reconnect to campus Wi-Fi or cellular network to resume analysis.</li>
+      <li>Reconnect to campus Wi-Fi or cellular data to resume analysis.</li>
     </ul>
   </div>
+
+  <div class="security-note">
+    <h4>Security Notice</h4>
+    <p>SignalSafe does not cache scan results, JWT tokens, or personal data on this device. All threat analysis requires live server connectivity.</p>
+  </div>
+
+  <a href="/" class="retry-btn" onclick="window.location.reload(); return false;">
+    ↻ Retry Connection
+  </a>
 </body>
 </html>
-

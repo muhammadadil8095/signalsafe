@@ -8,6 +8,8 @@ import { PublicLayout } from '@/layouts/PublicLayout';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
 import { AuthLayout } from '@/layouts/AuthLayout';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { ConnectionStatus } from '@/components/ConnectionStatus';
+import { SwUpdateNotification } from '@/components/SwUpdateNotification';
 
 // Route Lazy Loading for minimal initial payload and lightning-fast FCP/LCP
 const Landing = lazy(() => import('@/pages/Landing').then(m => ({ default: m.Landing })));
@@ -51,6 +53,8 @@ export const App: React.FC = () => {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <BrowserRouter>
+          <SwUpdateNotification />
+          <ConnectionStatus />
           <Suspense fallback={<RouteLoader />}>
             <Routes>
               {/* Public Marketing & Info Pages */}
