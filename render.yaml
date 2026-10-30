@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: signalsafe-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt && python -m app.database.seed
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: APP_NAME
+        value: SignalSafe Campus
+      - key: VT_ENABLED
+        value: "True"
+      - key: VT_API_KEY
+        value: 3f7d1f5662ea93dc084584d6e9c2d9050a28a826e94de7276c55f03ca661652e
+      - key: VT_RATE_LIMIT
+        value: "4"
+      - key: CORS_ORIGINS
+        value: '["*"]'
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///./signalsafe.db
