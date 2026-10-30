@@ -21,7 +21,7 @@ export const Product: React.FC = () => {
       title: 'URL Threat Scanner',
       subtitle: 'Multi-Signal Autonomous Web Threat Detection',
       icon: Shield,
-      color: 'text-cyber-green',
+      tag: 'SPEC-01 // RADAR',
       desc: 'Our primary defense engine combines static lexical analysis, 27 machine learning features, and external reputation databases to classify suspicious destinations before users interact with them.',
       capabilities: [
         'Heuristic inspection of URL length, punycode, TLDs, and path patterns',
@@ -37,7 +37,7 @@ export const Product: React.FC = () => {
       title: 'QR Code Quishing Shield',
       subtitle: 'Physical & Digital QR Threat Neutralization',
       icon: QrCode,
-      color: 'text-cyber-cyan',
+      tag: 'SPEC-02 // MATRIX',
       desc: 'QR codes are pervasive on university campuses — on bulletin boards, parking meters, and library desks. Attackers replace legitimate codes with malicious redirects.',
       capabilities: [
         'Live device camera QR scanning with client-side matrix decoding',
@@ -53,122 +53,119 @@ export const Product: React.FC = () => {
       title: 'Suspicious Message Analyzer',
       subtitle: 'Social Engineering & Coercive Phishing Detection',
       icon: MessageSquareWarning,
-      color: 'text-amber-400',
+      tag: 'SPEC-03 // NLP',
       desc: 'Campus communication frequently faces spoofing: fake IT alerts demanding password verification, urgent financial aid refunds requiring gift cards, or impersonation of faculty members.',
       capabilities: [
         'Detection of urgency keywords and artificial pressure markers',
         'Flagging of unconventional payment demands (cryptocurrency, gift cards, wire transfers)',
-        'Authority impersonation detection (IT desk, dean, registrar, financial aid office)',
-        'Clear contextual guidance without misclassifying legitimate academic disagreement',
+        'Identification of authority claims (campus administration, professors, system admins)',
+        'Zero-execution static analysis preserving student privacy and communications confidentiality',
       ],
       action: '/dashboard/analyze-message',
-      actionLabel: 'Analyze Message',
+      actionLabel: 'Analyze Messages',
     },
     {
       id: 'attachment',
       title: 'Attachment Static Inspector',
-      subtitle: 'Safe Structural Parsing for PDF and HTML Files',
+      subtitle: 'Structural Analysis of Educational Documents',
       icon: FileWarning,
-      color: 'text-purple-400',
-      desc: 'Deceptive syllabi, financial aid notices, and academic materials are often distributed via PDF and HTML attachments containing embedded exploits or credential forms.',
+      tag: 'SPEC-04 // PARSER',
+      desc: 'Malicious PDFs and weaponized HTML files disguise themselves as class syllabi, research papers, or campus invoices. We inspect document byte streams without running binary payload code.',
       capabilities: [
-        'Zero execution policy: static inspection of file structure only',
-        'PDF inspection: OpenAction triggers, /Launch commands, embedded binaries, and external URIs',
-        'HTML inspection: External form actions, hidden iframes, script obfuscation, and meta-refresh',
-        '10MB maximum file size limit, strict MIME verification, and immediate server memory cleanup',
+        'PDF inspection for JavaScript streams, OpenAction triggers, and Launch directives',
+        'HTML inspection for hidden iframe redirects, script obfuscation, and credential forms',
+        'Immediate quarantine recommendations prior to student interaction',
+        'Strict 10MB file limit with deterministic static extraction',
       ],
       action: '/dashboard/analyze-file',
-      actionLabel: 'Inspect File Attachment',
+      actionLabel: 'Inspect Attachments',
     },
     {
       id: 'incident',
       title: 'Campus Incident Desk',
-      subtitle: 'Collaborative Reporting & Threat Mitigation',
+      subtitle: 'End-to-End Institutional Triage & Response',
       icon: AlertTriangle,
-      color: 'text-rose-400',
-      desc: 'Empowers university students and faculty to escalate confirmed threats directly to security operations centers for institutional takedown and remediation.',
+      tag: 'SPEC-05 // DESK',
+      desc: 'Empowers students and faculty to escalate verified threats directly to university security operations with attached telemetry and audit trails.',
       capabilities: [
-        'End-to-end incident lifecycle: Submitted → Under Review → Investigating → Resolved',
-        'Severity triage and administrative status management',
-        'Optional linking of scan evidence to report submissions',
-        'Immutable audit logs tracking all administrative actions and status updates',
+        'Incident submission with severity categorization (low, medium, high, critical)',
+        'Automated linkage to prior scan records and evidence tokens',
+        'Administrative dashboard with status transitions (submitted, investigating, resolved)',
+        'Immutable audit logs tracking administrative reviews and enforcement decisions',
       ],
       action: '/dashboard/report-incident',
-      actionLabel: 'Submit Security Report',
+      actionLabel: 'Open Incident Desk',
     },
   ];
 
   return (
-    <div className="py-12 space-y-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="space-y-16 py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 font-sans">
       {/* Header */}
-      <div className="text-center max-w-3xl mx-auto space-y-4">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
-          Product & <span className="cyber-gradient-text">Protection Engines</span>
+      <div className="border-b border-grid/20 pb-8 text-left max-w-4xl">
+        <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase mb-2">
+          Architecture Specifications
+        </div>
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-[-0.04em] leading-[0.92] text-forest">
+          Core Threat Engines & Defensive Architecture
         </h1>
-        <p className="text-slate-300 text-base leading-relaxed">
-          Deep-dive into the five foundational cybersecurity capabilities defending university campuses against modern digital threats.
+        <p className="mt-4 text-sm sm:text-base text-forest/80 font-sans leading-relaxed">
+          Detailed technical specifications for the five modular security systems defending university networks against phishing, quishing, and social engineering.
         </p>
       </div>
 
-      {/* Sections */}
-      <div className="space-y-16">
+      {/* Feature Deep Dives */}
+      <div className="space-y-8">
         {sections.map((sec, idx) => {
           const Icon = sec.icon;
-          const isEven = idx % 2 === 0;
           return (
-            <Card
-              key={sec.id}
-              id={sec.id}
-              className="p-8 sm:p-12 border-white/10 bg-navy-900/60 transition-all hover:border-white/20"
-            >
-              <div className={`flex flex-col lg:flex-row gap-8 lg:gap-12 items-start ${isEven ? '' : 'lg:flex-row-reverse'}`}>
-                <div className="flex-1 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className={`p-2.5 rounded-xl bg-navy-800 border border-white/10 ${sec.color}`}>
-                      <Icon className="w-6 h-6" />
+            <Card key={sec.id} id={sec.id} className="p-6 sm:p-8 bg-white border border-grid/20 rounded-sm shadow-none">
+              <div className="flex flex-col lg:flex-row gap-6 justify-between items-start">
+                <div className="space-y-3 max-w-2xl">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-sm bg-paper border border-grid/20 flex items-center justify-center text-forest">
+                      <Icon className="w-4 h-4" />
                     </div>
-                    <div>
-                      <h2 className="text-2xl font-bold text-white tracking-tight">{sec.title}</h2>
-                      <div className="text-xs font-mono text-slate-400">{sec.subtitle}</div>
-                    </div>
+                    <span className="font-mono text-[10px] tracking-[0.1em] text-forest/60 uppercase">
+                      {sec.tag}
+                    </span>
                   </div>
 
-                  <p className="text-sm text-slate-300 leading-relaxed pt-2">{sec.desc}</p>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl font-heading font-bold text-forest tracking-tight">{sec.title}</h2>
+                    <p className="text-xs font-mono text-forest/60 mt-0.5">{sec.subtitle}</p>
+                  </div>
 
-                  <div className="space-y-2.5 pt-2">
-                    <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Engine Capabilities</h4>
-                    <ul className="space-y-2">
-                      {sec.capabilities.map((cap, capIdx) => (
-                        <li key={capIdx} className="text-xs text-slate-300 flex items-start gap-2">
-                          <CheckCircle className="w-4 h-4 text-cyber-green shrink-0 mt-0.5" />
+                  <p className="text-xs font-sans text-forest/80 leading-relaxed">{sec.desc}</p>
+
+                  <div className="pt-2">
+                    <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60 mb-2 font-bold">
+                      Technical Capabilities:
+                    </div>
+                    <ul className="space-y-1.5 font-mono text-xs text-forest/85">
+                      {sec.capabilities.map((cap, cIdx) => (
+                        <li key={cIdx} className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-forest mt-1.5 shrink-0" />
                           <span>{cap}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
+                </div>
 
-                  <div className="pt-4">
-                    <Link to={sec.action}>
-                      <Button variant="primary" size="md" icon={<ArrowRight className="w-4 h-4" />}>
+                <div className="w-full lg:w-64 pt-4 lg:pt-0 shrink-0">
+                  <div className="p-4 rounded-sm bg-paper border border-grid/20 space-y-3">
+                    <div className="text-[10px] font-mono uppercase tracking-wider text-forest/60">
+                      Module Status
+                    </div>
+                    <div className="flex items-center gap-2 font-mono text-xs font-bold text-forest">
+                      <span className="w-2 h-2 rounded-full bg-forest" />
+                      OPERATIONAL
+                    </div>
+                    <Link to={sec.action} className="block w-full">
+                      <Button variant="primary" size="sm" className="w-full" icon={<ArrowRight className="w-3.5 h-3.5" />}>
                         {sec.actionLabel}
                       </Button>
                     </Link>
-                  </div>
-                </div>
-
-                <div className="w-full lg:w-5/12 rounded-xl bg-navy-950 border border-white/10 p-5 font-mono text-xs text-slate-300 space-y-3 shadow-inner">
-                  <div className="flex items-center justify-between pb-2 border-b border-white/10 text-slate-400 text-[11px]">
-                    <span className="flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-cyber-green animate-pulse" /> ENGINE_SPEC.JSON
-                    </span>
-                    <span>STANDALONE MODE</span>
-                  </div>
-                  <div className="space-y-1 text-slate-400 text-[11px] leading-relaxed">
-                    <p><span className="text-cyber-cyan">"target_scope"</span>: "Campus Network & User Submissions",</p>
-                    <p><span className="text-cyber-cyan">"execution_model"</span>: "Zero-Execution Static Parsing",</p>
-                    <p><span className="text-cyber-cyan">"explainability"</span>: "True",</p>
-                    <p><span className="text-cyber-cyan">"persistence"</span>: "SQLAlchemy & Audit Store",</p>
-                    <p><span className="text-cyber-cyan">"status"</span>: "Production Ready"</p>
                   </div>
                 </div>
               </div>
@@ -179,4 +176,3 @@ export const Product: React.FC = () => {
     </div>
   );
 };
-

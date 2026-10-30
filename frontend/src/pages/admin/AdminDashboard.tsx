@@ -53,72 +53,89 @@ export const AdminDashboard: React.FC = () => {
   }
 
   const threatDistData = [
-    { name: 'Safe', count: stats?.threat_distribution?.safe || 0, color: '#00ff88' },
-    { name: 'Suspicious', count: stats?.threat_distribution?.suspicious || 0, color: '#ffbb00' },
-    { name: 'Malicious', count: stats?.threat_distribution?.malicious || 0, color: '#ff3366' },
+    { name: 'Safe', count: stats?.threat_distribution?.safe || 0, color: '#10B981' },
+    { name: 'Suspicious', count: stats?.threat_distribution?.suspicious || 0, color: '#EAB308' },
+    { name: 'Malicious', count: stats?.threat_distribution?.malicious || 0, color: '#E15A3E' },
   ];
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-          Security Operations Center
-          <span className="text-xs px-2 py-0.5 rounded bg-purple-950 text-purple-400 border border-purple-500/30">
-            ADMINISTRATOR
-          </span>
-        </h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Institutional cybersecurity metrics, threat distributions, and incident triage pipeline.
-        </p>
+    <div className="space-y-6 max-w-6xl mx-auto font-sans">
+      <div className="border-b border-grid/20 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase">
+            Console // Administrator
+          </div>
+          <h1 className="text-2xl font-heading font-bold text-forest tracking-tight">
+            Security Operations Command
+          </h1>
+          <p className="text-xs text-forest/70 font-sans mt-0.5">
+            Aggregated institutional threat metrics, risk classifications, and operational triage pipeline.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Link to="/admin/incidents">
+            <Button variant="secondary" size="sm">
+              Manage Incident Desk
+            </Button>
+          </Link>
+          <Link to="/admin/audit">
+            <Button variant="primary" size="sm">
+              Audit Logs
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Top Telemetry KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <Card className="p-5">
-          <div className="text-xs font-mono text-slate-400">Total Enrolled Accounts</div>
-          <div className="text-3xl font-extrabold text-white mt-2">{stats?.total_users || 0}</div>
-          <div className="text-[11px] text-cyber-cyan mt-1">Students & Faculty</div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 font-mono">
+        <Card className="p-4 bg-white border border-grid/20 rounded-sm shadow-none">
+          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">Enrolled Members</div>
+          <div className="text-2xl font-heading font-bold text-forest mt-1">{stats?.total_users || 0}</div>
+          <div className="text-[10px] text-forest/50 mt-0.5">STUDENTS & FACULTY</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-xs font-mono text-slate-400">Total Threat Scans</div>
-          <div className="text-3xl font-extrabold text-cyber-green mt-2">{stats?.total_scans || 0}</div>
-          <div className="text-[11px] text-slate-400 mt-1">Platform-Wide Execution</div>
+        <Card className="p-4 bg-white border border-grid/20 rounded-sm shadow-none">
+          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">Total Threat Scans</div>
+          <div className="text-2xl font-heading font-bold text-forest mt-1">{stats?.total_scans || 0}</div>
+          <div className="text-[10px] text-forest/50 mt-0.5">PLATFORM EXECUTION</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-xs font-mono text-slate-400">Malicious Blocks</div>
-          <div className="text-3xl font-extrabold text-cyber-danger mt-2">{stats?.malicious_detections || 0}</div>
-          <div className="text-[11px] text-rose-400 mt-1">High-Risk Threats</div>
+        <Card className="p-4 bg-white border border-grid/20 rounded-sm shadow-none">
+          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">Malicious Blocks</div>
+          <div className="text-2xl font-heading font-bold text-coral mt-1">{stats?.malicious_detections || 0}</div>
+          <div className="text-[10px] text-coral/80 mt-0.5">ISOLATED VECTORS</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-xs font-mono text-slate-400">Open Incidents</div>
-          <div className="text-3xl font-extrabold text-amber-400 mt-2">{stats?.open_reports || 0}</div>
-          <div className="text-[11px] text-slate-400 mt-1">Pending Investigation</div>
+        <Card className="p-4 bg-white border border-grid/20 rounded-sm shadow-none">
+          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">Open Incidents</div>
+          <div className="text-2xl font-heading font-bold text-forest mt-1">{stats?.open_reports || 0}</div>
+          <div className="text-[10px] text-forest/50 mt-0.5">PENDING TRIAGE</div>
         </Card>
       </div>
 
       {/* Analytics Chart & Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="p-6 lg:col-span-2 space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <Card className="p-5 bg-white border border-grid/20 rounded-sm lg:col-span-2 space-y-3 shadow-none">
           <div>
-            <h3 className="text-sm font-semibold text-white">Threat Category Distribution</h3>
-            <p className="text-xs text-slate-400">Aggregated risk classifications from user scans</p>
+            <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase">Telemetry</div>
+            <h3 className="text-sm font-heading font-bold text-forest">Threat Category Distribution</h3>
+            <p className="text-xs font-sans text-forest/70">Aggregated risk classifications from campus scans</p>
           </div>
-          <div className="h-64 w-full pt-4">
+          <div className="h-56 w-full pt-2">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={threatDistData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <XAxis dataKey="name" stroke="#64748b" fontSize={12} tickLine={false} />
-                <YAxis stroke="#64748b" fontSize={12} tickLine={false} />
+                <XAxis dataKey="name" stroke="#3A3A38" fontSize={11} tickLine={false} fontFamily="JetBrains Mono" />
+                <YAxis stroke="#3A3A38" fontSize={11} tickLine={false} fontFamily="JetBrains Mono" />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#0b1022',
-                    borderColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: '8px',
-                    fontSize: '12px',
+                    backgroundColor: '#FFFFFF',
+                    borderColor: 'rgba(58, 58, 56, 0.2)',
+                    borderRadius: '2px',
+                    fontSize: '11px',
+                    fontFamily: 'JetBrains Mono',
+                    color: '#1A3C2B',
                   }}
                 />
-                <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                <Bar dataKey="count" radius={[0, 0, 0, 0]}>
                   {threatDistData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke="#3A3A38" strokeWidth={1} />
                   ))}
                 </Bar>
               </BarChart>
@@ -126,81 +143,57 @@ export const AdminDashboard: React.FC = () => {
           </div>
         </Card>
 
-        <Card className="p-6 space-y-4 flex flex-col justify-between">
+        <Card className="p-5 bg-white border border-grid/20 rounded-sm space-y-3 flex flex-col justify-between shadow-none">
           <div>
-            <h3 className="text-sm font-semibold text-white">Detection Source Health</h3>
-            <p className="text-xs text-slate-400">Subsystem status & pipeline availability</p>
+            <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase">Subsystems</div>
+            <h3 className="text-sm font-heading font-bold text-forest">Detection Source Health</h3>
+            <p className="text-xs font-sans text-forest/70">Availability status of core detection engines</p>
           </div>
-          <div className="space-y-3 font-mono text-xs">
-            <div className="p-3 rounded-lg bg-navy-950 border border-white/5 flex items-center justify-between">
-              <span className="text-slate-300">ML Random Forest:</span>
-              <span className="text-cyber-green font-bold">ONLINE</span>
+          <div className="space-y-2 font-mono text-xs">
+            <div className="p-2.5 rounded-sm bg-paper border border-grid/20 flex items-center justify-between">
+              <span className="text-forest/70">ML Classifier:</span>
+              <span className="text-forest bg-mint px-1.5 py-0.5 rounded-sm border border-forest/20 text-[10px] font-bold">ONLINE</span>
             </div>
-            <div className="p-3 rounded-lg bg-navy-950 border border-white/5 flex items-center justify-between">
-              <span className="text-slate-300">Heuristic Engine:</span>
-              <span className="text-cyber-green font-bold">ONLINE</span>
+            <div className="p-2.5 rounded-sm bg-paper border border-grid/20 flex items-center justify-between">
+              <span className="text-forest/70">Heuristic Engine:</span>
+              <span className="text-forest bg-mint px-1.5 py-0.5 rounded-sm border border-forest/20 text-[10px] font-bold">ONLINE</span>
             </div>
-            <div className="p-3 rounded-lg bg-navy-950 border border-white/5 flex items-center justify-between">
-              <span className="text-slate-300">Quishing Decoder:</span>
-              <span className="text-cyber-green font-bold">ONLINE</span>
+            <div className="p-2.5 rounded-sm bg-paper border border-grid/20 flex items-center justify-between">
+              <span className="text-forest/70">Quishing Decoder:</span>
+              <span className="text-forest bg-mint px-1.5 py-0.5 rounded-sm border border-forest/20 text-[10px] font-bold">ONLINE</span>
             </div>
-            <div className="p-3 rounded-lg bg-navy-950 border border-white/5 flex items-center justify-between">
-              <span className="text-slate-300">VirusTotal v3:</span>
-              <span className="text-slate-400">STANDALONE</span>
+            <div className="p-2.5 rounded-sm bg-paper border border-grid/20 flex items-center justify-between">
+              <span className="text-forest/70">VirusTotal v3:</span>
+              <span className="text-forest/60 bg-paper-muted px-1.5 py-0.5 rounded-sm border border-grid/20 text-[10px] font-bold">STANDALONE</span>
             </div>
           </div>
-          <Link to="/admin/incidents">
-            <Button variant="secondary" size="sm" className="w-full" icon={<ArrowRight className="w-4 h-4" />}>
-              Open Incident Triage Desk
-            </Button>
-          </Link>
         </Card>
       </div>
 
-      {/* Recent Incidents Table */}
-      <Card className="p-6 space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-semibold text-white">Recent Security Reports</h3>
-            <p className="text-xs text-slate-400">Reports filed by students and faculty requiring investigation</p>
-          </div>
-          <Link to="/admin/incidents" className="text-xs text-cyber-cyan hover:underline flex items-center gap-1">
-            View All Reports <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-
-        {stats?.recent_incidents?.length === 0 ? (
-          <div className="py-8 text-center text-xs text-slate-400">
-            No incidents reported yet.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="text-slate-400 border-b border-white/10 uppercase font-mono text-[11px]">
-                <tr>
-                  <th className="py-3 px-3">Case Title</th>
-                  <th className="py-3 px-3">Type</th>
-                  <th className="py-3 px-3">Severity</th>
-                  <th className="py-3 px-3">Status</th>
-                  <th className="py-3 px-3">Filed At</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5 text-slate-300">
-                {stats?.recent_incidents?.map((inc) => (
-                  <tr key={inc.id} className="hover:bg-white/5 transition-colors">
-                    <td className="py-3 px-3 font-semibold text-white max-w-xs truncate">{inc.title}</td>
-                    <td className="py-3 px-3 capitalize font-mono text-slate-400">{inc.incident_type}</td>
-                    <td className="py-3 px-3"><Badge variant="severity" value={inc.severity} /></td>
-                    <td className="py-3 px-3 uppercase text-[11px] font-mono">{inc.status}</td>
-                    <td className="py-3 px-3 text-slate-400">{inc.created_at ? new Date(inc.created_at).toLocaleDateString() : 'N/A'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </Card>
+      {/* Quick Action Navigation */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <Link to="/admin/incidents" className="block">
+          <Card hover className="p-4 bg-white border border-grid/20 rounded-sm">
+            <div className="font-mono text-[10px] text-forest/60 uppercase">Operations Desk</div>
+            <div className="text-sm font-heading font-bold text-forest mt-0.5">Incident Management</div>
+            <p className="text-xs font-sans text-forest/70 mt-1">Triage and transition ticket states</p>
+          </Card>
+        </Link>
+        <Link to="/admin/users" className="block">
+          <Card hover className="p-4 bg-white border border-grid/20 rounded-sm">
+            <div className="font-mono text-[10px] text-forest/60 uppercase">Access Governance</div>
+            <div className="text-sm font-heading font-bold text-forest mt-0.5">User Directory & Roles</div>
+            <p className="text-xs font-sans text-forest/70 mt-1">Manage RBAC permissions</p>
+          </Card>
+        </Link>
+        <Link to="/admin/audit" className="block">
+          <Card hover className="p-4 bg-white border border-grid/20 rounded-sm">
+            <div className="font-mono text-[10px] text-forest/60 uppercase">Compliance Trail</div>
+            <div className="text-sm font-heading font-bold text-forest mt-0.5">Security Audit Logs</div>
+            <p className="text-xs font-sans text-forest/70 mt-1">Immutable administrative ledger</p>
+          </Card>
+        </Link>
+      </div>
     </div>
   );
 };
-

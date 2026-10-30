@@ -18,7 +18,7 @@ export const Badge: React.FC<BadgeProps> = ({
     return (
       <span
         className={cn(
-          'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider border',
+          'inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-semibold tracking-[0.1em] uppercase border shadow-none select-none',
           info.color,
           className
         )}
@@ -34,7 +34,7 @@ export const Badge: React.FC<BadgeProps> = ({
     return (
       <span
         className={cn(
-          'inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border capitalize',
+          'inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-semibold tracking-[0.1em] uppercase border shadow-none select-none',
           info.color,
           className
         )}
@@ -48,7 +48,7 @@ export const Badge: React.FC<BadgeProps> = ({
   return (
     <span
       className={cn(
-        'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-navy-800 text-slate-300 border border-white/10',
+        'inline-flex items-center px-2 py-0.5 rounded-sm text-[10px] font-mono font-semibold tracking-[0.1em] uppercase bg-paper-muted text-forest border border-grid/20 shadow-none select-none',
         className
       )}
       {...props}
@@ -57,4 +57,3 @@ export const Badge: React.FC<BadgeProps> = ({
     </span>
   );
 };
-

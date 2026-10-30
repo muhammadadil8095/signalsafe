@@ -30,7 +30,24 @@ export const Login: React.FC = () => {
       await login({ email, password });
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Authentication failed. Please check your credentials.');
+      setError(err.response?.data?.detail || 'Authentication failed. Please verify credentials.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const quickLoginAs = async (role: 'student' | 'admin' | 'faculty') => {
+    let creds = { email: 'student@campus.edu', password: 'student123' };
+    if (role === 'admin') creds = { email: 'admin@signalsafe.edu', password: 'admin123' };
+    if (role === 'faculty') creds = { email: 'faculty@campus.edu', password: 'faculty123' };
+
+    setLoading(true);
+    setError(null);
+    try {
+      await login(creds);
+      navigate(role === 'admin' ? '/admin' : '/dashboard/scan-url');
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Quick demo login failed. Please type credentials manually.');
     } finally {
       setLoading(false);
     }
@@ -50,22 +67,22 @@ export const Login: React.FC = () => {
   };
 
   return (
-    <Card className="p-8 border-white/10 bg-navy-900/90 shadow-2xl">
-      <div className="space-y-2 mb-6">
-        <h2 className="text-xl font-bold text-white tracking-tight">Sign In to Campus Radar</h2>
-        <p className="text-xs text-slate-400">Enter your university credentials to access threat tools</p>
+    <Card className="p-6 sm:p-8 border border-grid/20 bg-white rounded-sm shadow-none">
+      <div className="space-y-1 mb-6 pb-3 border-b border-grid/20">
+        <h2 className="text-xl font-heading font-bold text-forest tracking-tight">Identity Authentication</h2>
+        <p className="text-xs text-forest/70 font-sans">Submit authorized institutional credentials</p>
       </div>
 
-      {error && <Alert type="error" message={error} className="mb-5" />}
+      {error && <Alert type="error" message={error} className="mb-4" />}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
-          label="Email Address"
+          label="Institutional Email"
           type="email"
           placeholder="student@campus.edu"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          icon={<Mail className="w-4 h-4" />}
+          icon={<Mail className="w-4 h-4 text-forest/50" />}
           required
         />
 
@@ -75,52 +92,66 @@ export const Login: React.FC = () => {
           placeholder="••••••••"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          icon={<Lock className="w-4 h-4" />}
+          icon={<Lock className="w-4 h-4 text-forest/50" />}
           required
         />
 
-        <Button type="submit" variant="primary" size="md" className="w-full mt-2" loading={loading} icon={<ArrowRight className="w-4 h-4" />}>
-          Sign In
+        <Button type="submit" variant="primary" size="md" className="w-full mt-2" loading={loading} icon={<ArrowRight className="w-3.5 h-3.5" />}>
+          Authenticate
         </Button>
       </form>
 
-      {/* Quick Demo Logins for Judges / Evaluators */}
-      <div className="mt-6 pt-5 border-t border-white/10 space-y-2.5">
-        <div className="text-[11px] font-mono uppercase text-slate-400 text-center">
-          Judge / Demo One-Click Sign In
+      {/* Quick 1-Click Demo Logins for Judges / Evaluators */}
+      <div className="mt-6 pt-4 border-t border-[#1A231E]/40 space-y-3">
+        <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest font-bold text-center">
+          1-Click Evaluator Access (Immediate Login)
         </div>
         <div className="grid grid-cols-3 gap-2">
-          <button
+          <Button
             type="button"
-            onClick={() => fillDemoAccount('student')}
-            className="px-2 py-1.5 rounded-lg bg-navy-950 border border-white/10 text-[11px] font-medium text-cyber-green hover:bg-white/5 transition-colors"
+            variant="primary"
+            size="sm"
+            onClick={() => quickLoginAs('student')}
+            loading={loading}
           >
-            Student Demo
-          </button>
-          <button
+            Student
+          </Button>
+          <Button
             type="button"
-            onClick={() => fillDemoAccount('faculty')}
-            className="px-2 py-1.5 rounded-lg bg-navy-950 border border-white/10 text-[11px] font-medium text-cyber-cyan hover:bg-white/5 transition-colors"
+            variant="secondary"
+            size="sm"
+            onClick={() => quickLoginAs('faculty')}
+            loading={loading}
           >
-            Faculty Demo
-          </button>
-          <button
+            Faculty
+          </Button>
+          <Button
             type="button"
-            onClick={() => fillDemoAccount('admin')}
-            className="px-2 py-1.5 rounded-lg bg-navy-950 border border-white/10 text-[11px] font-medium text-purple-400 hover:bg-white/5 transition-colors"
+            variant="secondary"
+            size="sm"
+            onClick={() => quickLoginAs('admin')}
+            loading={loading}
           >
-            Admin Demo
-          </button>
+            Admin SOC
+          </Button>
+        </div>
+
+        <div className="pt-2 text-center">
+          <Link
+            to="/scan"
+            className="text-xs font-mono font-bold uppercase tracking-wider text-forest hover:underline inline-flex items-center gap-1.5"
+          >
+            Or Skip Login & Go Directly to Live Scanner <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
 
-      <div className="mt-6 text-center text-xs text-slate-400">
-        Don't have an account?{' '}
-        <Link to="/register" className="text-cyber-green hover:underline font-medium">
-          Create an account
+      <div className="mt-5 text-center text-xs font-sans text-forest/70">
+        Unregistered member?{' '}
+        <Link to="/register" className="text-forest font-semibold underline underline-offset-2 hover:text-forest-light">
+          Create student record
         </Link>
       </div>
     </Card>
   );
 };
-

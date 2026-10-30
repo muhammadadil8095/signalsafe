@@ -4,57 +4,135 @@
 
 @layer base {
   :root {
-    --background: 222 47% 4%;
-    --foreground: 210 40% 98%;
+    --background: #E8E9E5;
+    --foreground: #0D1F17;
+    --border: #1A231E;
   }
 
   body {
-    @apply bg-navy-950 text-slate-100 antialiased selection:bg-cyber-green/30 selection:text-cyber-green;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: #E8E9E5;
+    color: #0D1F17;
+    font-family: 'Inter', 'General Sans', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    selection-background-color: #A7F3D0;
+    selection-color: #0D1F17;
   }
 
-  code, pre {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.03em;
+    color: #0D1F17;
+  }
+
+  code, pre, .font-mono {
     font-family: 'JetBrains Mono', monospace;
+  }
+
+  * {
+    box-shadow: none !important;
   }
 }
 
 @layer utilities {
+  /* Stark high-contrast 1px border */
+  .hairline-border {
+    border: 1px solid #1A231E;
+  }
+
+  .hairline-b {
+    border-bottom: 1px solid #1A231E;
+  }
+
+  .hairline-t {
+    border-top: 1px solid #1A231E;
+  }
+
+  .hairline-r {
+    border-right: 1px solid #1A231E;
+  }
+
+  .hairline-l {
+    border-left: 1px solid #1A231E;
+  }
+
+  /* Flat Technical Card with stark 1px boundary */
+  .technical-card {
+    background-color: #FFFFFF;
+    border: 1px solid #1A231E;
+    border-radius: 2px;
+  }
+
+  .technical-panel {
+    background-color: #DDDFDA;
+    border: 1px solid #1A231E;
+    border-radius: 2px;
+  }
+
+  /* Technical Minimalist Grid Paper Background with stark definition */
+  .paper-grid {
+    background-color: #E8E9E5;
+    background-image: 
+      linear-gradient(to right, rgba(26, 35, 30, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(26, 35, 30, 0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  /* Ensure border-grid classes have high-contrast stark visibility */
+  .border-grid\/20,
+  .border-grid\/10 {
+    border-color: rgba(26, 35, 30, 0.45) !important;
+  }
+
+  .text-forest\/80,
+  .text-forest\/70 {
+    color: #1F2E25 !important;
+  }
+
+  .text-forest\/60,
+  .text-forest\/50 {
+    color: #2F3E35 !important;
+  }
+
+  /* Technical image blend rule: mix-blend-luminosity with 90% opacity, shift to full color on hover */
+  .technical-image {
+    mix-blend-mode: luminosity;
+    opacity: 0.9;
+    transition: opacity 150ms ease-out, mix-blend-mode 150ms ease-out;
+  }
+
+  .technical-image:hover {
+    mix-blend-mode: normal;
+    opacity: 1;
+  }
+
+  /* Legacy mappings mapped cleanly to flat technical minimalist styling */
   .glass-card {
-    background: rgba(17, 24, 50, 0.65);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: #FFFFFF;
+    border: 1px solid rgba(58, 58, 56, 0.2);
+    border-radius: 2px;
   }
 
   .glass-panel {
-    background: rgba(11, 16, 34, 0.85);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
-  }
-
-  .glow-green {
-    box-shadow: 0 0 25px -5px rgba(0, 255, 136, 0.25);
-  }
-
-  .glow-cyan {
-    box-shadow: 0 0 25px -5px rgba(0, 212, 255, 0.25);
-  }
-
-  .glow-danger {
-    box-shadow: 0 0 25px -5px rgba(255, 51, 102, 0.25);
-  }
-
-  .cyber-gradient-text {
-    background: linear-gradient(135deg, #00ff88 0%, #00d4ff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    background-color: #EFEFEA;
+    border: 1px solid rgba(58, 58, 56, 0.2);
+    border-radius: 2px;
   }
 
   .cyber-grid {
-    background-size: 40px 40px;
+    background-color: #F7F7F5;
     background-image: 
-      linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      linear-gradient(to right, rgba(58, 58, 56, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(58, 58, 56, 0.05) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+
+  .glow-green, .glow-cyan, .glow-danger {
+    box-shadow: none !important;
+  }
+
+  .cyber-gradient-text {
+    color: #1A3C2B;
+    background: none;
+    -webkit-text-fill-color: initial;
   }
 }

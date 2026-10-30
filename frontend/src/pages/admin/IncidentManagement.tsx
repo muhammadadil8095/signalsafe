@@ -56,27 +56,30 @@ export const IncidentManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">Campus Incident Triage Desk</h1>
-        <p className="text-xs text-slate-400 mt-1">Review student & faculty incident reports, assign statuses, and record resolution logs.</p>
+    <div className="space-y-6 max-w-6xl mx-auto font-sans">
+      <div className="border-b border-grid/20 pb-3">
+        <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase">
+          Triage Desk // Governance
+        </div>
+        <h1 className="text-2xl font-heading font-bold text-forest tracking-tight">Campus Incident Triage Desk</h1>
+        <p className="text-xs text-forest/70 font-sans mt-0.5">Review student and faculty incident reports, assign statuses, and record resolution logs.</p>
       </div>
 
-      <Card className="p-0 overflow-hidden border-white/10 bg-navy-900/60">
+      <Card className="p-0 overflow-hidden border border-grid/20 bg-white rounded-sm shadow-none">
         {loading ? (
           <div className="py-20 flex justify-center">
             <LoadingSpinner size="lg" />
           </div>
         ) : reports.length === 0 ? (
-          <div className="py-16 text-center text-xs text-slate-400">
+          <div className="py-16 text-center text-xs font-mono text-forest/60">
             No incident reports recorded in the database.
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-navy-950/80 text-slate-400 border-b border-white/10 uppercase font-mono text-[11px]">
+            <table className="w-full text-left text-xs font-mono">
+              <thead className="bg-paper text-forest/70 border-b border-grid/20 uppercase text-[10px]">
                 <tr>
-                  <th className="py-3 px-4">Title</th>
+                  <th className="py-3 px-4">Subject Title</th>
                   <th className="py-3 px-4">Type</th>
                   <th className="py-3 px-4">Severity</th>
                   <th className="py-3 px-4">Current Status</th>
@@ -84,16 +87,16 @@ export const IncidentManagement: React.FC = () => {
                   <th className="py-3 px-4 text-right">Triage</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-slate-300">
+              <tbody className="divide-y divide-grid/10 text-forest">
                 {reports.map((r) => (
-                  <tr key={r.id} className="hover:bg-white/5 transition-colors">
-                    <td className="py-3 px-4 font-semibold text-white max-w-sm truncate">{r.title}</td>
-                    <td className="py-3 px-4 capitalize font-mono text-slate-400">{r.incident_type}</td>
+                  <tr key={r.id} className="hover:bg-paper transition-colors">
+                    <td className="py-3 px-4 font-semibold text-forest max-w-sm truncate font-sans">{r.title}</td>
+                    <td className="py-3 px-4 uppercase text-[10px] text-forest/60">{r.incident_type}</td>
                     <td className="py-3 px-4"><Badge variant="severity" value={r.severity} /></td>
                     <td className="py-3 px-4">
-                      <span className="font-mono uppercase text-[11px] text-cyber-cyan">{r.status}</span>
+                      <span className="font-mono uppercase text-[10px] px-1.5 py-0.5 rounded-sm bg-paper border border-grid/20 text-forest font-semibold">{r.status}</span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400">{new Date(r.created_at).toLocaleDateString()}</td>
+                    <td className="py-3 px-4 text-forest/60">{new Date(r.created_at).toLocaleDateString()}</td>
                     <td className="py-3 px-4 text-right">
                       <Button variant="outline" size="sm" onClick={() => openReviewModal(r)}>
                         Review Case
@@ -114,45 +117,45 @@ export const IncidentManagement: React.FC = () => {
           onClose={() => setSelectedReport(null)}
           title={`Incident Investigation: ${selectedReport.id.slice(0, 8)}`}
         >
-          <div className="space-y-4 text-xs">
+          <div className="space-y-4 text-xs font-mono">
             {successMsg && <Alert type="success" message={successMsg} />}
 
             <div>
-              <h4 className="text-base font-bold text-white">{selectedReport.title}</h4>
-              <p className="text-slate-400 text-[11px] font-mono mt-0.5">
-                Submitted on {new Date(selectedReport.created_at).toLocaleString()}
+              <h4 className="text-sm font-heading font-bold text-forest">{selectedReport.title}</h4>
+              <p className="text-forest/60 text-[10px] mt-0.5">
+                SUBMITTED: {new Date(selectedReport.created_at).toLocaleString()}
               </p>
             </div>
 
-            <div className="p-3 rounded-lg bg-navy-950 border border-white/5 space-y-1">
-              <span className="text-slate-400 font-semibold uppercase text-[10px]">Report Description</span>
-              <p className="text-slate-200 leading-relaxed whitespace-pre-wrap">{selectedReport.description}</p>
+            <div className="p-3 rounded-sm bg-paper border border-grid/20 space-y-1">
+              <span className="text-forest/60 font-bold uppercase text-[10px]">Report Description</span>
+              <p className="text-forest font-sans leading-relaxed whitespace-pre-wrap">{selectedReport.description}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="block text-slate-400 font-semibold uppercase text-[10px]">Update Status</label>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="block text-forest/60 font-bold uppercase text-[10px]">Update Status</label>
                 <select
                   value={statusToUpdate}
                   onChange={(e) => setStatusToUpdate(e.target.value as IncidentStatus)}
-                  className="w-full rounded-lg bg-navy-950 border border-white/10 px-3 py-2 text-xs text-white focus:outline-none focus:border-cyber-cyan"
+                  className="w-full rounded-sm bg-white border border-grid/20 px-3 py-1.5 text-xs font-mono text-forest focus:outline-none focus:border-forest shadow-none"
                 >
-                  <option value="submitted">Submitted</option>
-                  <option value="under_review">Under Review</option>
-                  <option value="investigating">Investigating</option>
-                  <option value="resolved">Resolved</option>
-                  <option value="rejected">Rejected</option>
+                  <option value="submitted">SUBMITTED</option>
+                  <option value="under_review">UNDER_REVIEW</option>
+                  <option value="investigating">INVESTIGATING</option>
+                  <option value="resolved">RESOLVED</option>
+                  <option value="rejected">REJECTED</option>
                 </select>
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-slate-400 font-semibold uppercase text-[10px]">Report Severity</label>
-                <div className="py-2"><Badge variant="severity" value={selectedReport.severity} /></div>
+              <div className="space-y-1">
+                <label className="block text-forest/60 font-bold uppercase text-[10px]">Report Severity</label>
+                <div className="py-1"><Badge variant="severity" value={selectedReport.severity} /></div>
               </div>
             </div>
 
-            <div className="space-y-1.5">
-              <label className="block text-slate-400 font-semibold uppercase text-[10px]">
+            <div className="space-y-1">
+              <label className="block text-forest/60 font-bold uppercase text-[10px]">
                 Administrative Resolution Notes
               </label>
               <textarea
@@ -160,7 +163,7 @@ export const IncidentManagement: React.FC = () => {
                 value={resolutionNotes}
                 onChange={(e) => setResolutionNotes(e.target.value)}
                 placeholder="Log notes about DNS blocks, firewall rules, or student notifications..."
-                className="w-full rounded-lg bg-navy-950 border border-white/10 p-2.5 text-xs text-white focus:outline-none focus:border-cyber-cyan"
+                className="w-full rounded-sm bg-white border border-grid/20 p-2.5 text-xs font-mono text-forest focus:outline-none focus:border-forest shadow-none"
               />
             </div>
 
@@ -173,7 +176,7 @@ export const IncidentManagement: React.FC = () => {
                 size="sm"
                 onClick={handleUpdateStatus}
                 loading={updating}
-                icon={<Save className="w-4 h-4" />}
+                icon={<Save className="w-3.5 h-3.5" />}
               >
                 Save Triage Updates
               </Button>
@@ -184,4 +187,3 @@ export const IncidentManagement: React.FC = () => {
     </div>
   );
 };
-

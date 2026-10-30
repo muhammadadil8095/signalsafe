@@ -57,9 +57,9 @@ export const StudentDashboard: React.FC = () => {
   const reportsCount = reports.length;
 
   const chartData = [
-    { name: 'Safe', value: safeScans || 1, color: '#00ff88' },
-    { name: 'Suspicious / Malicious', value: threatsDetected || 0, color: '#ff3366' },
-    { name: 'Inconclusive', value: scans.filter(s => s.risk_level === 'inconclusive').length || 0, color: '#6366f1' },
+    { name: 'Safe', value: safeScans || 1, color: '#10B981' },
+    { name: 'Suspicious / Malicious', value: threatsDetected || 0, color: '#E15A3E' },
+    { name: 'Inconclusive', value: scans.filter(s => s.risk_level === 'inconclusive').length || 0, color: '#EAB308' },
   ].filter(d => d.value > 0);
 
   if (loading) {
@@ -71,25 +71,28 @@ export const StudentDashboard: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 max-w-6xl mx-auto font-sans">
       {/* Welcome Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl bg-gradient-to-r from-navy-900 to-navy-800 border border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 sm:p-6 rounded-sm bg-white border border-grid/20 shadow-none">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+          <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase">
+            OPERATIONS // STUDENT_HUB
+          </div>
+          <h1 className="text-2xl font-heading font-bold text-forest tracking-tight">
             Welcome, {user?.full_name || user?.username}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Institutional defense is active. Protect your digital footprint across campus.
+          <p className="text-xs text-forest/70 font-sans mt-0.5">
+            Active threat perimeter deployed. Evaluate vectors and track institutional reports.
           </p>
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
           <Link to="/dashboard/scan-url">
-            <Button variant="primary" size="sm" icon={<Search className="w-4 h-4" />}>
+            <Button variant="primary" size="sm" icon={<Search className="w-3.5 h-3.5" />}>
               Scan URL
             </Button>
           </Link>
           <Link to="/dashboard/scan-qr">
-            <Button variant="secondary" size="sm" icon={<QrCode className="w-4 h-4" />}>
+            <Button variant="secondary" size="sm" icon={<QrCode className="w-3.5 h-3.5" />}>
               Scan QR
             </Button>
           </Link>
@@ -97,108 +100,112 @@ export const StudentDashboard: React.FC = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        <Card className="p-5">
-          <div className="text-xs font-mono text-slate-400">Total Scans Executed</div>
-          <div className="text-3xl font-extrabold text-white mt-2">{totalScans}</div>
-          <div className="text-[11px] text-cyber-cyan mt-1">Direct Telemetry</div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <Card className="p-4 bg-white border border-grid/20 rounded-sm shadow-none">
+          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">Total Scans</div>
+          <div className="text-2xl font-heading font-bold text-forest mt-1">{totalScans}</div>
+          <div className="text-[10px] font-mono text-forest/50 mt-0.5">TELEMETRY_LOGS</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-xs font-mono text-slate-400">Threats Flagged</div>
-          <div className="text-3xl font-extrabold text-cyber-danger mt-2">{threatsDetected}</div>
-          <div className="text-[11px] text-slate-400 mt-1">Neutralized in Sandbox</div>
+        <Card className="p-4 bg-white border border-grid/20 rounded-sm shadow-none">
+          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">Threats Flagged</div>
+          <div className="text-2xl font-heading font-bold text-coral mt-1">{threatsDetected}</div>
+          <div className="text-[10px] font-mono text-coral/80 mt-0.5">ISOLATED_SANDBOX</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-xs font-mono text-slate-400">Safe Scans Verified</div>
-          <div className="text-3xl font-extrabold text-cyber-green mt-2">{safeScans}</div>
-          <div className="text-[11px] text-slate-400 mt-1">Legitimate Domains</div>
+        <Card className="p-4 bg-white border border-grid/20 rounded-sm shadow-none">
+          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">Verified Clean</div>
+          <div className="text-2xl font-heading font-bold text-forest mt-1">{safeScans}</div>
+          <div className="text-[10px] font-mono text-forest/70 mt-0.5">VALID_DOMAINS</div>
         </Card>
-        <Card className="p-5">
-          <div className="text-xs font-mono text-slate-400">My Reports Filed</div>
-          <div className="text-3xl font-extrabold text-purple-400 mt-2">{reportsCount}</div>
-          <div className="text-[11px] text-slate-400 mt-1">Security Incident Desk</div>
+        <Card className="p-4 bg-white border border-grid/20 rounded-sm shadow-none">
+          <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">Reports Logged</div>
+          <div className="text-2xl font-heading font-bold text-forest mt-1">{reportsCount}</div>
+          <div className="text-[10px] font-mono text-forest/50 mt-0.5">DESK_ESCALATIONS</div>
         </Card>
       </div>
 
       {/* Middle Grid: Threat Chart & Recommendations */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Threat Distribution Chart */}
-        <Card className="p-6 lg:col-span-1 flex flex-col justify-between">
+        <Card className="p-5 bg-white border border-grid/20 rounded-sm lg:col-span-1 flex flex-col justify-between shadow-none">
           <div>
-            <h3 className="text-sm font-semibold text-white mb-1">Threat Distribution</h3>
-            <p className="text-xs text-slate-400">Categorical breakdown of your scan history</p>
+            <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase">Telemetry Analysis</div>
+            <h3 className="text-sm font-heading font-bold text-forest mb-0.5">Threat Distribution</h3>
+            <p className="text-xs font-sans text-forest/70">Categorical scan classification</p>
           </div>
-          <div className="h-56 w-full flex items-center justify-center my-2">
+          <div className="h-48 w-full flex items-center justify-center my-2">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
                   data={chartData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={55}
-                  outerRadius={80}
-                  paddingAngle={5}
+                  innerRadius={45}
+                  outerRadius={70}
+                  paddingAngle={3}
                   dataKey="value"
                 >
                   {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${index}`} fill={entry.color} stroke="#3A3A38" strokeWidth={1} />
                   ))}
                 </Pie>
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#0b1022',
-                    borderColor: 'rgba(255,255,255,0.1)',
-                    borderRadius: '8px',
-                    fontSize: '12px',
+                    backgroundColor: '#FFFFFF',
+                    borderColor: 'rgba(58, 58, 56, 0.2)',
+                    borderRadius: '2px',
+                    fontSize: '11px',
+                    fontFamily: 'JetBrains Mono',
+                    color: '#1A3C2B',
                   }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex justify-around text-xs text-slate-300 pt-2 border-t border-white/5">
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-cyber-green" /> Safe</span>
-            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-cyber-danger" /> Malicious</span>
+          <div className="flex justify-around text-[10px] font-mono text-forest/80 pt-2 border-t border-grid/10">
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-mint border border-forest/20" /> Safe</span>
+            <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-sm bg-coral border border-forest/20" /> Malicious</span>
           </div>
         </Card>
 
         {/* Security Recommendations & Quick Tools */}
-        <Card className="p-6 lg:col-span-2 space-y-5">
+        <Card className="p-5 bg-white border border-grid/20 rounded-sm lg:col-span-2 space-y-4 shadow-none">
           <div>
-            <h3 className="text-sm font-semibold text-white mb-1">Campus Safety Advisory</h3>
-            <p className="text-xs text-slate-400">Current collegiate security recommendations based on telemetry</p>
+            <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase">Defensive Protocol</div>
+            <h3 className="text-sm font-heading font-bold text-forest mb-0.5">Campus Safety Advisories</h3>
+            <p className="text-xs font-sans text-forest/70">Autonomous rules based on collegiate threat patterns</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            <div className="p-4 rounded-xl bg-navy-950/70 border border-white/5 space-y-1">
-              <div className="text-xs font-semibold text-cyber-cyan flex items-center gap-1.5">
-                <QrCode className="w-4 h-4" /> Physical Poster Caution
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 font-mono text-xs">
+            <div className="p-3 rounded-sm bg-paper border border-grid/20 space-y-1">
+              <div className="text-forest font-bold flex items-center gap-1.5 uppercase text-[11px]">
+                <QrCode className="w-3.5 h-3.5" /> Physical Poster Caution
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Always use SignalSafe QR Scanner before entering student portal credentials from physical campus flyers or stickers.
+              <p className="text-[11px] font-sans text-forest/80 leading-relaxed">
+                Always decode QR flyers with SignalSafe Quishing Shield before submitting credentials.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-navy-950/70 border border-white/5 space-y-1">
-              <div className="text-xs font-semibold text-cyber-green flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4" /> IT Support Verification
+            <div className="p-3 rounded-sm bg-paper border border-grid/20 space-y-1">
+              <div className="text-forest font-bold flex items-center gap-1.5 uppercase text-[11px]">
+                <ShieldCheck className="w-3.5 h-3.5" /> IT Support Verification
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Campus IT will never email asking you to verify your university password via an external link.
+              <p className="text-[11px] font-sans text-forest/80 leading-relaxed">
+                Campus IT will never email asking for university password renewals through external forms.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-navy-950/70 border border-white/5 space-y-1">
-              <div className="text-xs font-semibold text-amber-400 flex items-center gap-1.5">
-                <MessageSquareWarning className="w-4 h-4" /> Urgent Refund Alerts
+            <div className="p-3 rounded-sm bg-paper border border-grid/20 space-y-1">
+              <div className="text-forest font-bold flex items-center gap-1.5 uppercase text-[11px]">
+                <MessageSquareWarning className="w-3.5 h-3.5" /> Advance-Fee Grants
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Financial aid disbursements are deposited directly to your bank, never through prepaid cards or wire services.
+              <p className="text-[11px] font-sans text-forest/80 leading-relaxed">
+                Financial aid grants do not require prepaid processing gift cards or wire transfers.
               </p>
             </div>
-            <div className="p-4 rounded-xl bg-navy-950/70 border border-white/5 space-y-1">
-              <div className="text-xs font-semibold text-purple-400 flex items-center gap-1.5">
-                <FileWarning className="w-4 h-4" /> PDF Syllabus Safety
+            <div className="p-3 rounded-sm bg-paper border border-grid/20 space-y-1">
+              <div className="text-forest font-bold flex items-center gap-1.5 uppercase text-[11px]">
+                <FileWarning className="w-3.5 h-3.5" /> Attachment Inspection
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                If a downloaded class PDF requests enabling macros or executing JavaScript, submit it for static attachment analysis.
+              <p className="text-[11px] font-sans text-forest/80 leading-relaxed">
+                Inspect syllabus PDFs statically if they request enabling macros or JavaScript interpreters.
               </p>
             </div>
           </div>
@@ -206,43 +213,43 @@ export const StudentDashboard: React.FC = () => {
       </div>
 
       {/* Recent Scans Table */}
-      <Card className="p-6 space-y-4">
-        <div className="flex items-center justify-between">
+      <Card className="p-5 bg-white border border-grid/20 rounded-sm space-y-3 shadow-none">
+        <div className="flex items-center justify-between pb-2 border-b border-grid/10">
           <div>
-            <h3 className="text-sm font-semibold text-white">Recent Threat Scans</h3>
-            <p className="text-xs text-slate-400">Latest URLs and assets inspected in sandbox</p>
+            <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase">Historical Record</div>
+            <h3 className="text-sm font-heading font-bold text-forest">Recent Threat Scans</h3>
           </div>
-          <Link to="/dashboard/history" className="text-xs text-cyber-cyan hover:underline flex items-center gap-1">
-            View All Scans <ArrowRight className="w-3.5 h-3.5" />
+          <Link to="/dashboard/history" className="text-xs font-mono tracking-wider uppercase text-forest hover:underline flex items-center gap-1">
+            View All Scans <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
 
         {scans.length === 0 ? (
-          <div className="py-8 text-center text-xs text-slate-400">
-            No scans recorded yet. Enter a URL above to inspect your first link!
+          <div className="py-6 text-center text-xs font-mono text-forest/60">
+            No scans recorded in active session.
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="text-slate-400 border-b border-white/10 uppercase font-mono text-[11px]">
+            <table className="w-full text-left text-xs font-mono">
+              <thead className="text-forest/60 border-b border-grid/20 uppercase text-[10px]">
                 <tr>
-                  <th className="py-3 px-3">Target / URL</th>
-                  <th className="py-3 px-3">Type</th>
-                  <th className="py-3 px-3">Risk Level</th>
-                  <th className="py-3 px-3">Score</th>
-                  <th className="py-3 px-3">Scanned</th>
+                  <th className="py-2.5 px-3">Target Vector</th>
+                  <th className="py-2.5 px-3">Type</th>
+                  <th className="py-2.5 px-3">Evaluation</th>
+                  <th className="py-2.5 px-3">Score</th>
+                  <th className="py-2.5 px-3">Timestamp</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-slate-300">
+              <tbody className="divide-y divide-grid/10 text-forest">
                 {scans.slice(0, 5).map((s) => (
-                  <tr key={s.id} className="hover:bg-white/5 transition-colors">
-                    <td className="py-3 px-3 font-mono text-white truncate max-w-xs">{s.original_input}</td>
-                    <td className="py-3 px-3 uppercase text-[11px] font-mono text-slate-400">{s.scan_type}</td>
-                    <td className="py-3 px-3">
+                  <tr key={s.id} className="hover:bg-paper transition-colors">
+                    <td className="py-2.5 px-3 font-mono truncate max-w-xs">{s.original_input}</td>
+                    <td className="py-2.5 px-3 uppercase text-[10px] text-forest/70">{s.scan_type}</td>
+                    <td className="py-2.5 px-3">
                       <Badge variant="risk" value={s.risk_level} />
                     </td>
-                    <td className="py-3 px-3 font-mono">{s.risk_score}/100</td>
-                    <td className="py-3 px-3 text-slate-400">{new Date(s.scanned_at).toLocaleDateString()}</td>
+                    <td className="py-2.5 px-3">{s.risk_score} / 100</td>
+                    <td className="py-2.5 px-3 text-forest/60">{new Date(s.scanned_at).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -253,4 +260,3 @@ export const StudentDashboard: React.FC = () => {
     </div>
   );
 };
-

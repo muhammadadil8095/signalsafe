@@ -11,35 +11,36 @@ export const PublicLayout: React.FC = () => {
   const location = useLocation();
 
   const navLinks = [
-    { label: 'Home', href: '/' },
-    { label: 'Product & Features', href: '/product' },
-    { label: 'Architecture & Research', href: '/about' },
+    { label: 'URL Scanner', href: '/scan' },
+    { label: 'QR Scanner', href: '/scan-qr' },
+    { label: 'Threat Engines', href: '/product' },
+    { label: 'Architecture', href: '/about' },
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-navy-950 text-slate-100 cyber-grid">
+    <div className="min-h-screen flex flex-col bg-paper text-forest paper-grid font-sans">
       {/* Navigation Header */}
-      <header className="sticky top-0 z-40 w-full border-b border-white/5 bg-navy-950/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 w-full border-b border-grid/20 bg-paper/95 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyber-green/20 to-cyber-cyan/20 border border-cyber-cyan/30 flex items-center justify-center transition-all group-hover:scale-105 group-hover:border-cyber-green">
-              <Shield className="w-5 h-5 text-cyber-green" />
+            <div className="w-8 h-8 rounded-sm bg-white border border-grid/20 flex items-center justify-center transition-colors group-hover:border-forest">
+              <Shield className="w-4 h-4 text-forest" />
             </div>
             <div>
-              <span className="font-bold text-lg tracking-tight text-white flex items-center gap-1.5">
-                SignalSafe <span className="text-xs font-mono font-medium px-1.5 py-0.5 rounded bg-cyber-green/10 text-cyber-green border border-cyber-green/20">CAMPUS</span>
+              <span className="font-heading font-bold text-base tracking-tight text-forest flex items-center gap-1.5">
+                SignalSafe <span className="text-[10px] font-mono font-semibold tracking-[0.1em] px-1.5 py-0.5 rounded-sm bg-mint text-forest border border-forest/20">CAMPUS</span>
               </span>
             </div>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden md:flex items-center gap-6">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
-                className={`text-sm font-medium transition-colors hover:text-cyber-green ${
-                  location.pathname === link.href ? 'text-cyber-green' : 'text-slate-300'
+                className={`text-xs font-mono tracking-wider uppercase transition-colors hover:text-forest ${
+                  location.pathname === link.href ? 'text-forest font-bold underline underline-offset-4 decoration-forest' : 'text-forest/70'
                 }`}
               >
                 {link.label}
@@ -50,10 +51,15 @@ export const PublicLayout: React.FC = () => {
           {/* Right Action */}
           <div className="hidden md:flex items-center gap-3">
             <InstallPwaButton />
+            <Link to="/scan">
+              <Button variant="outline" size="sm" icon={<Shield className="w-3.5 h-3.5" />}>
+                Live Scanner
+              </Button>
+            </Link>
             {isAuthenticated ? (
               <Link to="/dashboard">
-                <Button variant="primary" size="sm" icon={<ArrowRight className="w-4 h-4" />}>
-                  Dashboard ({user?.username})
+                <Button variant="primary" size="sm" icon={<ArrowRight className="w-3.5 h-3.5" />}>
+                  Hub ({user?.username})
                 </Button>
               </Link>
             ) : (
@@ -65,7 +71,7 @@ export const PublicLayout: React.FC = () => {
                 </Link>
                 <Link to="/register">
                   <Button variant="primary" size="sm">
-                    Get Protected
+                    Access Shield
                   </Button>
                 </Link>
               </>
@@ -78,31 +84,31 @@ export const PublicLayout: React.FC = () => {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label={mobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
-              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5"
+              className="p-1.5 rounded-sm text-forest border border-grid/20 bg-white hover:bg-paper-muted"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
         {/* Mobile dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-b border-white/10 bg-navy-900/95 backdrop-blur-xl px-4 py-4 space-y-3">
+          <div className="md:hidden border-b border-grid/20 bg-paper px-4 py-4 space-y-3">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className="block py-2 text-sm font-medium text-slate-300 hover:text-cyber-green"
+                className="block py-1.5 text-xs font-mono uppercase tracking-wider text-forest hover:font-bold"
               >
                 {link.label}
               </Link>
             ))}
-            <div className="pt-3 border-t border-white/10 flex flex-col gap-2">
+            <div className="pt-3 border-t border-grid/20 flex flex-col gap-2">
               {isAuthenticated ? (
                 <Link to="/dashboard" onClick={() => setMobileMenuOpen(false)}>
                   <Button variant="primary" size="sm" className="w-full">
-                    Go to Dashboard
+                    Go to Hub
                   </Button>
                 </Link>
               ) : (
@@ -130,51 +136,50 @@ export const PublicLayout: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/5 bg-navy-950/90 py-12 text-slate-400 text-sm">
+      <footer className="border-t border-grid/20 bg-white py-12 text-forest/70 text-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-3">
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-cyber-green" />
-              <span className="font-bold text-white tracking-tight">SignalSafe Campus</span>
+              <Shield className="w-4 h-4 text-forest" />
+              <span className="font-heading font-bold text-sm text-forest tracking-tight">SignalSafe Campus</span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Your digital safety. One signal ahead. Institutional cybersecurity shield designed for modern university communities.
+            <p className="text-xs text-forest/70 leading-relaxed font-sans">
+              Technical cybersecurity telemetry designed for university networks and student communications.
             </p>
           </div>
           <div>
-            <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-3">Threat Engines</h4>
-            <ul className="space-y-2 text-xs">
-              <li><Link to="/product#url" className="hover:text-cyber-green transition-colors">URL Threat Scanner</Link></li>
-              <li><Link to="/product#qr" className="hover:text-cyber-green transition-colors">QR Quishing Detection</Link></li>
-              <li><Link to="/product#message" className="hover:text-cyber-green transition-colors">Social Engineering Filter</Link></li>
-              <li><Link to="/product#attachment" className="hover:text-cyber-green transition-colors">PDF/HTML Attachment Inspector</Link></li>
+            <div className="text-forest text-[11px] font-mono font-bold uppercase tracking-wider mb-3">Threat Engines</div>
+            <ul className="space-y-2 font-mono text-xs text-forest/80">
+              <li><Link to="/product#url" className="hover:text-forest hover:underline">URL Scanner</Link></li>
+              <li><Link to="/product#qr" className="hover:text-forest hover:underline">QR Quishing Defense</Link></li>
+              <li><Link to="/product#message" className="hover:text-forest hover:underline">Message Analyzer</Link></li>
+              <li><Link to="/product#attachment" className="hover:text-forest hover:underline">Attachment Inspector</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-3">Institutional</h4>
-            <ul className="space-y-2 text-xs">
-              <li><Link to="/about" className="hover:text-cyber-green transition-colors">System Architecture</Link></li>
-              <li><Link to="/about#ml" className="hover:text-cyber-green transition-colors">ML Feature Extraction</Link></li>
-              <li><Link to="/about#responsible-ai" className="hover:text-cyber-green transition-colors">Responsible AI Principles</Link></li>
-              <li><a href="/docs" target="_blank" className="hover:text-cyber-green transition-colors flex items-center gap-1">FastAPI Docs <ExternalLink className="w-3 h-3" /></a></li>
+            <div className="text-forest text-[11px] font-mono font-bold uppercase tracking-wider mb-3">Specifications</div>
+            <ul className="space-y-2 font-mono text-xs text-forest/80">
+              <li><Link to="/about" className="hover:text-forest hover:underline">System Architecture</Link></li>
+              <li><Link to="/about#ml" className="hover:text-forest hover:underline">27-Feature ML Model</Link></li>
+              <li><Link to="/about#responsible-ai" className="hover:text-forest hover:underline">Responsible AI Spec</Link></li>
+              <li><a href="/docs" target="_blank" className="hover:text-forest hover:underline flex items-center gap-1">REST API Docs <ExternalLink className="w-3 h-3" /></a></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-white text-xs font-semibold uppercase tracking-wider mb-3">Campus Security</h4>
-            <p className="text-xs text-slate-400 leading-relaxed mb-3">
-              Need immediate help? Contact your campus incident response hotline or log in to file an authorized report.
+            <div className="text-forest text-[11px] font-mono font-bold uppercase tracking-wider mb-3">Operations</div>
+            <p className="text-xs text-forest/70 leading-relaxed mb-3 font-sans">
+              Institutional security protocol v1.0. Zero-depth, deterministic threat scoring.
             </p>
-            <div className="text-xs font-mono text-cyber-cyan">
-              v1.0.0 Production Core
+            <div className="text-[11px] font-mono font-semibold px-2 py-1 bg-paper-muted border border-grid/20 rounded-sm text-forest inline-block">
+              ENGINE // ACTIVE
             </div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400">
-          <p>© 2026 SignalSafe Campus. Built for collegiate threat defense.</p>
-          <p className="mt-2 sm:mt-0 font-mono">Status: All threat analyzers operational</p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pt-6 border-t border-grid/20 flex flex-col sm:flex-row items-center justify-between text-[11px] font-mono text-forest/60">
+          <p>© 2026 SignalSafe Campus. All rights reserved.</p>
+          <p className="mt-2 sm:mt-0">Hairline Grid 1px · Paper #F7F7F5 · Forest #1A3C2B</p>
         </div>
       </footer>
     </div>
   );
 };
-

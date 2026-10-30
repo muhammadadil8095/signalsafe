@@ -9,8 +9,8 @@ export const Card: React.FC<CardProps> = ({ className, hover, children, ...props
   return (
     <div
       className={cn(
-        'glass-card rounded-xl p-5 text-slate-100',
-        hover && 'transition-all duration-300 hover:border-white/20 hover:bg-navy-800/60 hover:-translate-y-0.5',
+        'bg-white border border-[#1A231E]/60 rounded-sm p-5 text-forest shadow-none',
+        hover && 'transition-colors duration-150 ease-out hover:border-forest',
         className
       )}
       {...props}
@@ -19,4 +19,3 @@ export const Card: React.FC<CardProps> = ({ className, hover, children, ...props
     </div>
   );
 };
-

@@ -4,18 +4,16 @@ import { Shield } from 'lucide-react';
 
 export const AuthLayout: React.FC = () => {
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-navy-950 cyber-grid relative">
-      <div className="absolute inset-0 bg-gradient-radial from-cyber-cyan/5 via-transparent to-transparent pointer-events-none" />
-
+    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-paper paper-grid relative font-sans">
       {/* Brand Header */}
       <div className="mb-8 text-center relative z-10">
-        <Link to="/" className="inline-flex items-center gap-2.5 mb-2 group">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyber-green/20 to-cyber-cyan/20 border border-cyber-cyan/30 flex items-center justify-center transition-all group-hover:scale-105 group-hover:border-cyber-green shadow-xl shadow-cyber-green/5">
-            <Shield className="w-6 h-6 text-cyber-green" />
+        <Link to="/" className="inline-flex items-center gap-2 mb-2 group">
+          <div className="w-10 h-10 rounded-sm bg-white border border-grid/20 flex items-center justify-center transition-colors group-hover:border-forest">
+            <Shield className="w-5 h-5 text-forest" />
           </div>
-          <span className="font-bold text-2xl tracking-tight text-white">SignalSafe</span>
+          <span className="font-heading font-bold text-2xl tracking-tight text-forest">SignalSafe</span>
         </Link>
-        <p className="text-xs text-slate-400">Institutional Cybersecurity Ecosystem</p>
+        <p className="text-xs font-mono uppercase tracking-[0.1em] text-forest/60">Institutional Threat Architecture</p>
       </div>
 
       {/* Auth Card Container */}
@@ -25,11 +23,10 @@ export const AuthLayout: React.FC = () => {
 
       {/* Bottom return link */}
       <div className="mt-8 text-center relative z-10">
-        <Link to="/" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
-          ← Back to SignalSafe Campus Home
+        <Link to="/" className="text-xs font-mono tracking-wider uppercase text-forest/70 hover:text-forest hover:underline">
+          ← Return to Radar Overview
         </Link>
       </div>
     </div>
   );
 };
-

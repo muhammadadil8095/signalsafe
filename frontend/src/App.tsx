@@ -56,6 +56,8 @@ export const App: React.FC = () => {
               {/* Public Marketing & Info Pages */}
               <Route element={<PublicLayout />}>
                 <Route path="/" element={<Landing />} />
+                <Route path="/scan" element={<div className="max-w-5xl mx-auto px-4 py-8 w-full"><URLScanner /></div>} />
+                <Route path="/scan-qr" element={<div className="max-w-5xl mx-auto px-4 py-8 w-full"><QRScanner /></div>} />
                 <Route path="/product" element={<Product />} />
                 <Route path="/about" element={<About />} />
               </Route>

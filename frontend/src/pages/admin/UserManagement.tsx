@@ -59,88 +59,89 @@ export const UserManagement: React.FC = () => {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-6 max-w-6xl mx-auto font-sans">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-grid/20 pb-3">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">User Directory & Roles</h1>
-          <p className="text-xs text-slate-400 mt-1">Manage institutional student, faculty, and administrator privileges.</p>
+          <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase">
+            Directory // Governance
+          </div>
+          <h1 className="text-2xl font-heading font-bold text-forest tracking-tight">Institutional User Directory</h1>
+          <p className="text-xs text-forest/70 font-sans mt-0.5">Manage user credentials, assign role-based permissions, and toggle access states.</p>
         </div>
 
-        <div className="w-full sm:w-64">
+        <div className="w-full sm:w-72">
           <Input
-            type="text"
-            placeholder="Search email, username..."
+            placeholder="Search username or email..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            icon={<Search className="w-4 h-4" />}
+            icon={<Search className="w-4 h-4 text-forest/50" />}
           />
         </div>
       </div>
 
-      {notification && (
-        <Alert type="success" message={notification} />
-      )}
+      {notification && <Alert type="success" message={notification} />}
 
-      <Card className="p-0 overflow-hidden border-white/10 bg-navy-900/60">
+      <Card className="p-0 overflow-hidden border border-grid/20 bg-white rounded-sm shadow-none">
         {loading ? (
           <div className="py-20 flex justify-center">
             <LoadingSpinner size="lg" />
           </div>
+        ) : users.length === 0 ? (
+          <div className="py-16 text-center text-xs font-mono text-forest/60">
+            No institutional users match the query.
+          </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-navy-950/80 text-slate-400 border-b border-white/10 uppercase font-mono text-[11px]">
+            <table className="w-full text-left text-xs font-mono">
+              <thead className="bg-paper text-forest/70 border-b border-grid/20 uppercase text-[10px]">
                 <tr>
-                  <th className="py-3 px-4">User</th>
-                  <th className="py-3 px-4">Email Address</th>
+                  <th className="py-3 px-4">User Identity</th>
+                  <th className="py-3 px-4">Email</th>
                   <th className="py-3 px-4">Assigned Role</th>
-                  <th className="py-3 px-4">Status</th>
-                  <th className="py-3 px-4">Created</th>
+                  <th className="py-3 px-4">Account Status</th>
+                  <th className="py-3 px-4">Registered</th>
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-slate-300">
+              <tbody className="divide-y divide-grid/10 text-forest">
                 {users.map((u) => (
-                  <tr key={u.id} className="hover:bg-white/5 transition-colors">
+                  <tr key={u.id} className="hover:bg-paper transition-colors">
                     <td className="py-3 px-4">
-                      <div className="font-semibold text-white">{u.full_name || u.username}</div>
-                      <div className="text-[11px] font-mono text-slate-500">@{u.username}</div>
+                      <div className="font-semibold text-forest font-sans">{u.full_name || u.username}</div>
+                      <div className="text-[10px] text-forest/60">@{u.username}</div>
                     </td>
-                    <td className="py-3 px-4 font-mono text-slate-300">{u.email}</td>
+                    <td className="py-3 px-4 text-forest/80">{u.email}</td>
                     <td className="py-3 px-4">
                       <select
                         value={u.role}
                         disabled={updatingId === u.id}
                         onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                        className="rounded bg-navy-950 border border-white/10 px-2.5 py-1 text-xs text-white focus:outline-none focus:border-cyber-cyan"
+                        className="rounded-sm bg-white border border-grid/20 px-2 py-1 text-[11px] font-mono text-forest focus:outline-none focus:border-forest shadow-none"
                       >
-                        <option value="student">Student</option>
-                        <option value="faculty">Faculty</option>
-                        <option value="admin">Administrator</option>
+                        <option value="student">STUDENT</option>
+                        <option value="faculty">FACULTY</option>
+                        <option value="admin">ADMIN</option>
                       </select>
                     </td>
                     <td className="py-3 px-4">
-                      <span className={`inline-flex px-2 py-0.5 rounded text-[11px] font-medium border ${
-                        u.is_active ? 'text-cyber-green bg-emerald-950/40 border-emerald-800/40' : 'text-rose-400 bg-rose-950/40 border-rose-800/40'
+                      <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10px] font-mono font-semibold uppercase border ${
+                        u.is_active ? 'text-forest bg-mint border-forest/20' : 'text-forest-dark bg-coral border-coral'
                       }`}>
-                        {u.is_active ? 'Active' : 'Suspended'}
+                        {u.is_active ? 'ACTIVE' : 'SUSPENDED'}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-slate-400">
+                    <td className="py-3 px-4 text-forest/60">
                       {new Date(u.created_at).toLocaleDateString()}
                     </td>
                     <td className="py-3 px-4 text-right">
-                      <button
-                        onClick={() => handleStatusToggle(u.id, u.is_active)}
+                      <Button
+                        variant={u.is_active ? 'danger' : 'secondary'}
+                        size="sm"
                         disabled={updatingId === u.id}
-                        className={`text-xs px-2.5 py-1 rounded transition-colors ${
-                          u.is_active
-                            ? 'text-rose-400 hover:bg-rose-950/30'
-                            : 'text-cyber-green hover:bg-emerald-950/30'
-                        }`}
+                        onClick={() => handleStatusToggle(u.id, u.is_active)}
                       >
                         {u.is_active ? 'Suspend' : 'Activate'}
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -152,4 +153,3 @@ export const UserManagement: React.FC = () => {
     </div>
   );
 };
-

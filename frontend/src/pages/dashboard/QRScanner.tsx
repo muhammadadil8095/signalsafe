@@ -57,7 +57,7 @@ export const QRScanner: React.FC = () => {
       console.error('Camera start error:', err);
       setCameraActive(false);
       setCameraError(
-        'Unable to access camera. Please ensure camera permissions are granted. Modern browsers require HTTPS or localhost to enable camera hardware.'
+        'Unable to access camera hardware. Verify browser permissions. Mobile browsers require HTTPS context.'
       );
     }
   };
@@ -68,31 +68,23 @@ export const QRScanner: React.FC = () => {
         await qrReaderRef.current.stop();
         setCameraActive(false);
       } catch (err) {
-        console.error('Error stopping camera:', err);
+        console.error('Failed to stop camera:', err);
       }
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (qrReaderRef.current && qrReaderRef.current.isScanning) {
-        qrReaderRef.current.stop().catch(console.error);
-      }
-    };
-  }, []);
-
-  const handleQrSuccess = async (text: string) => {
+  const handleQrSuccess = async (decoded: string) => {
     stopCamera();
-    setDecodedText(text);
+    setDecodedText(decoded);
 
-    // Validate if it is a URL
-    if (text.startsWith('http://') || text.startsWith('https://') || text.includes('.')) {
+    // If decoded text is a URL, pipe to URL scanning pipeline
+    if (decoded.startsWith('http://') || decoded.startsWith('https://')) {
       setScanningUrl(true);
       try {
-        const result = await scanService.scanURL(text);
+        const result = await scanService.scanURL(decoded);
         setScanResult(result);
-      } catch (err: any) {
-        console.error('Failed to analyze decoded QR URL:', err);
+      } catch (err) {
+        console.error('Automated URL scan failed:', err);
       } finally {
         setScanningUrl(false);
       }
@@ -111,89 +103,100 @@ export const QRScanner: React.FC = () => {
       const html5QrCode = new Html5Qrcode('qr-upload-target');
       const decoded = await html5QrCode.scanFile(file, true);
       handleQrSuccess(decoded);
-    } catch (err: any) {
-      setCameraError('No valid QR code detected in the uploaded image. Please try a clearer screenshot.');
+    } catch (err) {
+      setCameraError('No valid QR matrix detected in this image. Ensure high contrast and good lighting.');
     }
   };
 
+  useEffect(() => {
+    return () => {
+      if (qrReaderRef.current && cameraActive) {
+        qrReaderRef.current.stop().catch(() => {});
+      }
+    };
+  }, [cameraActive]);
+
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
-      <div>
-        <h1 className="text-2xl font-bold text-white tracking-tight">QR Code Quishing Shield</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Scan campus bulletin board posters, parking flyers, and stickers safely without auto-redirecting.
+    <div className="space-y-6 max-w-4xl mx-auto font-sans">
+      <div className="border-b border-grid/20 pb-3">
+        <div className="text-[10px] font-mono tracking-[0.1em] text-forest/60 uppercase">
+          Engine // 02
+        </div>
+        <h1 className="text-2xl font-heading font-bold text-forest tracking-tight">QR Quishing Shield</h1>
+        <p className="text-xs text-forest/70 font-sans mt-0.5">
+          Decodes QR matrices client-side. Inspects targets inside an isolated sandbox without automatic redirects.
         </p>
       </div>
 
       {cameraError && <Alert type="warning" message={cameraError} />}
 
       {/* Tabs */}
-      <div className="flex border-b border-white/10 gap-4">
+      <div className="flex border-b border-grid/20 gap-4">
         <button
           onClick={() => {
             stopCamera();
             setActiveTab('camera');
           }}
-          className={`pb-3 text-sm font-semibold flex items-center gap-2 transition-colors border-b-2 ${
+          className={`pb-2 text-xs font-mono tracking-wider uppercase flex items-center gap-2 transition-colors border-b-2 ${
             activeTab === 'camera'
-              ? 'text-cyber-green border-cyber-green'
-              : 'text-slate-400 border-transparent hover:text-white'
+              ? 'text-forest border-forest font-bold'
+              : 'text-forest/60 border-transparent hover:text-forest'
           }`}
         >
-          <Camera className="w-4 h-4" /> Live Camera Scanner
+          <Camera className="w-3.5 h-3.5" /> Camera Ingestion
         </button>
         <button
           onClick={() => {
             stopCamera();
             setActiveTab('upload');
           }}
-          className={`pb-3 text-sm font-semibold flex items-center gap-2 transition-colors border-b-2 ${
+          className={`pb-2 text-xs font-mono tracking-wider uppercase flex items-center gap-2 transition-colors border-b-2 ${
             activeTab === 'upload'
-              ? 'text-cyber-green border-cyber-green'
-              : 'text-slate-400 border-transparent hover:text-white'
+              ? 'text-forest border-forest font-bold'
+              : 'text-forest/60 border-transparent hover:text-forest'
           }`}
         >
-          <Upload className="w-4 h-4" /> Upload QR Image / Screenshot
+          <Upload className="w-3.5 h-3.5" /> Upload Image / Screenshot
         </button>
       </div>
 
       {/* Scanner Workspace */}
-      <Card className="p-6 bg-navy-900/80 border-white/10 text-center">
+      <Card className="p-6 bg-white border border-grid/20 rounded-sm text-center shadow-none">
         {activeTab === 'camera' ? (
           <div className="space-y-4">
             <div
               id={readerElementId}
-              className="w-full max-w-sm mx-auto aspect-square rounded-xl bg-navy-950 border-2 border-dashed border-white/20 overflow-hidden flex items-center justify-center relative"
+              className="w-full max-w-sm mx-auto aspect-square rounded-sm bg-paper border border-dashed border-grid/30 overflow-hidden flex items-center justify-center relative"
             >
               {!cameraActive && (
-                <div className="p-6 text-center space-y-3">
-                  <QrCode className="w-12 h-12 text-slate-500 mx-auto" />
-                  <p className="text-xs text-slate-400">Click below to activate device camera.</p>
+                <div className="p-6 text-center space-y-2">
+                  <QrCode className="w-10 h-10 text-forest/40 mx-auto" />
+                  <p className="text-xs font-mono text-forest/60">Initialize camera hardware.</p>
                 </div>
               )}
             </div>
 
             <div className="flex justify-center gap-3">
               {!cameraActive ? (
-                <Button variant="primary" size="md" onClick={startCamera} icon={<Camera className="w-4 h-4" />}>
-                  Start Camera
+                <Button variant="primary" size="md" onClick={startCamera} icon={<Camera className="w-3.5 h-3.5" />}>
+                  Activate Camera
                 </Button>
               ) : (
                 <Button variant="secondary" size="md" onClick={stopCamera}>
-                  Stop Camera
+                  Deactivate Camera
                 </Button>
               )}
             </div>
           </div>
         ) : (
-          <div className="space-y-4 max-w-md mx-auto py-8">
+          <div className="space-y-4 max-w-md mx-auto py-6">
             <div id="qr-upload-target" className="hidden" />
-            <div className="w-16 h-16 rounded-2xl bg-navy-800 border border-white/10 flex items-center justify-center text-cyber-cyan mx-auto">
-              <Upload className="w-8 h-8" />
+            <div className="w-12 h-12 rounded-sm bg-paper border border-grid/20 flex items-center justify-center text-forest mx-auto">
+              <Upload className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-white">Select a QR Code Image</h3>
-              <p className="text-xs text-slate-400 mt-1">Upload JPG, PNG, or screenshot from your device</p>
+              <h3 className="text-sm font-heading font-bold text-forest">Select Image File</h3>
+              <p className="text-xs font-mono text-forest/60 mt-1">Accepts PNG, JPG, or screenshot format</p>
             </div>
             <label className="inline-block cursor-pointer">
               <input
@@ -202,8 +205,8 @@ export const QRScanner: React.FC = () => {
                 onChange={handleFileUpload}
                 className="hidden"
               />
-              <span className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg bg-navy-800 hover:bg-navy-700 text-white font-medium text-sm border border-white/10 transition-colors">
-                Browse Files
+              <span className="inline-flex items-center justify-center px-4 py-2 rounded-sm bg-forest text-paper font-mono uppercase tracking-wider text-xs border border-forest hover:bg-forest-light transition-colors">
+                Browse System Files
               </span>
             </label>
           </div>
@@ -212,53 +215,55 @@ export const QRScanner: React.FC = () => {
 
       {/* Decoded QR Details & Scan Results */}
       {decodedText && (
-        <div className="space-y-6 animate-in fade-in duration-300">
-          <Card className="p-6 bg-navy-900 border-white/15 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
-              <span className="text-xs font-mono uppercase tracking-wider text-slate-400">
-                Decoded QR Code Destination
+        <div className="space-y-4 animate-in fade-in duration-150">
+          <Card className="p-5 bg-white border border-grid/20 rounded-sm space-y-3 shadow-none">
+            <div className="flex items-center justify-between pb-2 border-b border-grid/10">
+              <span className="text-[10px] font-mono uppercase tracking-[0.1em] text-forest/60">
+                Decoded Matrix Payload
               </span>
-              <span className="text-xs font-mono text-cyber-cyan">ISOLATED SANDBOX</span>
+              <span className="text-[10px] font-mono font-bold text-forest bg-mint px-1.5 py-0.5 rounded-sm border border-forest/20">
+                ISOLATED SANDBOX
+              </span>
             </div>
 
-            <div className="p-4 rounded-xl bg-navy-950 border border-white/10 font-mono text-sm text-white break-all">
+            <div className="p-3 rounded-sm bg-paper border border-grid/20 font-mono text-xs text-forest break-all">
               {decodedText}
             </div>
 
-            <div className="p-3 rounded-lg bg-amber-950/30 border border-amber-800/40 text-xs text-amber-300 flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 shrink-0" />
+            <div className="p-2.5 rounded-sm bg-gold/20 border border-forest/20 text-xs font-mono text-forest flex items-center gap-2">
+              <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
               <span>
-                Safety First: Destination link was <strong>NOT</strong> opened in your browser to protect against drive-by exploits.
+                Browser auto-redirect was intercepted to prevent drive-by malicious script execution.
               </span>
             </div>
 
             {scanningUrl && (
-              <div className="py-6 text-center space-y-2">
-                <RefreshCw className="w-6 h-6 animate-spin mx-auto text-cyber-green" />
-                <p className="text-xs font-mono text-slate-400">Running multi-tier threat classification...</p>
+              <div className="py-4 text-center space-y-1">
+                <RefreshCw className="w-4 h-4 animate-spin mx-auto text-forest" />
+                <p className="text-[11px] font-mono text-forest/60">Executing multi-signal analysis...</p>
               </div>
             )}
           </Card>
 
           {/* Render Full Threat Assessment if URL was parsed */}
           {scanResult && (
-            <Card className="p-6 space-y-5 bg-navy-900/90 border-white/10">
+            <Card className="p-5 space-y-4 bg-white border border-grid/20 rounded-sm shadow-none">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-base font-bold text-white">Quishing Risk Assessment</h3>
-                  <p className="text-xs text-slate-400">Registered Domain: {scanResult.domain || 'N/A'}</p>
+                  <h3 className="text-sm font-heading font-bold text-forest">Quishing Threat Assessment</h3>
+                  <p className="text-[11px] font-mono text-forest/60">Domain: {scanResult.domain || 'N/A'}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="risk" value={scanResult.risk_level} />
-                  <span className="text-xs font-mono text-white font-bold">{Math.round(scanResult.risk_score)}/100</span>
+                  <span className="text-xs font-mono text-forest font-bold">{Math.round(scanResult.risk_score)} / 100</span>
                 </div>
               </div>
 
               {scanResult.signals.length > 0 && (
-                <div className="space-y-2">
-                  <div className="text-xs font-semibold text-slate-400">Detected Red Flags:</div>
+                <div className="space-y-1.5">
+                  <div className="text-[11px] font-mono uppercase tracking-wider text-forest/60">Detected Threat Indicators:</div>
                   {scanResult.signals.map((sig, idx) => (
-                    <div key={idx} className="p-3 rounded-lg bg-navy-950 border border-white/5 text-xs text-slate-300 flex items-start justify-between">
+                    <div key={idx} className="p-2.5 rounded-sm bg-paper border border-grid/20 text-xs font-mono text-forest flex items-start justify-between">
                       <span>{sig.description}</span>
                       <Badge variant="severity" value={sig.severity} />
                     </div>
@@ -266,9 +271,9 @@ export const QRScanner: React.FC = () => {
                 </div>
               )}
 
-              <div className="p-4 rounded-lg bg-navy-950 border border-white/5 space-y-2">
-                <div className="text-xs font-semibold text-white">Recommendations:</div>
-                <ul className="space-y-1 text-xs text-slate-300 list-disc pl-4">
+              <div className="p-3 rounded-sm bg-paper border border-grid/20 space-y-1 font-mono text-xs text-forest/80">
+                <div className="font-bold text-forest">Recommendations:</div>
+                <ul className="space-y-1 list-disc pl-4 text-[11px]">
                   {scanResult.recommendations.map((rec, idx) => (
                     <li key={idx}>{rec}</li>
                   ))}
@@ -281,4 +286,3 @@ export const QRScanner: React.FC = () => {
     </div>
   );
 };
-
