@@ -6,6 +6,7 @@ const KEYS = {
   user: "ssg.user",
   baseUrl: "ssg.baseUrl",
   lastScan: "ssg.lastScan",
+  lastTabId: "ssg.lastTabId",
 } as const;
 
 /**
@@ -61,7 +62,17 @@ export async function getLastScan(): Promise<ScanResponse | null> {
 }
 
 export async function clearLastScan(): Promise<void> {
-  await chrome.storage.local.remove(KEYS.lastScan);
+  await chrome.storage.local.remove([KEYS.lastScan, KEYS.lastTabId]);
+}
+
+export async function saveLastTabId(tabId: number): Promise<void> {
+  await chrome.storage.local.set({ [KEYS.lastTabId]: tabId });
+}
+
+export async function getLastTabId(): Promise<number | null> {
+  const data = await chrome.storage.local.get(KEYS.lastTabId);
+  const value = data[KEYS.lastTabId];
+  return typeof value === "number" ? value : null;
 }
 
 export function normalizeBaseUrl(input: string): string {

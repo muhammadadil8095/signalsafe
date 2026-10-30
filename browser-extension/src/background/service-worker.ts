@@ -1,5 +1,12 @@
 import { GuardianMessage, GuardianResponse, GuardianState, OverlayPayload, ScanResponse } from "../types";
-import { clearLastScan, getAuthState, getLastScan, setBaseUrl } from "../storage/storage";
+import {
+  clearLastScan,
+  getAuthState,
+  getLastScan,
+  getLastTabId,
+  saveLastTabId,
+  setBaseUrl,
+} from "../storage/storage";
 import { login, logout, fetchMe } from "../services/auth";
 import { reportScan, scanNeedsWarning, scanUrl } from "../services/scanner";
 import { ApiError, isUnavailable } from "../services/api";
@@ -78,6 +85,7 @@ async function scanCurrentTab(): Promise<GuardianResponse> {
   }
 
   try {
+    if (tab.id !== undefined) await saveLastTabId(tab.id);
     const scan = await scanUrl(check.url);
     const phase = phaseFromScan(scan);
     if (scanNeedsWarning(scan) && tab.id !== undefined) {
@@ -125,7 +133,7 @@ async function showWarningSurfaces(tabId: number, scan: ScanResponse): Promise<v
   try {
     await chrome.scripting.executeScript({
       target: { tabId },
-      files: ["src/content/content.ts"],
+      files: ["src/content/content.js"],
     });
     await chrome.tabs.sendMessage(tabId, { type: "SHOW_OVERLAY", payload });
   } catch {
@@ -139,10 +147,15 @@ async function openWarningPage(scanId: string): Promise<void> {
 }
 
 async function safeReturn(tabId: number): Promise<void> {
+  const originalId = (await getLastTabId()) ?? tabId;
   try {
-    await chrome.tabs.goBack(tabId);
+    await chrome.tabs.goBack(originalId);
   } catch {
-    await chrome.tabs.update(tabId, { url: "chrome://newtab/" });
+    try {
+      await chrome.tabs.update(originalId, { url: "chrome://newtab/" });
+    } catch {
+      /* original tab may already be gone */
+    }
   }
 }
 
