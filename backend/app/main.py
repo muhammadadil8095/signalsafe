@@ -1,6 +1,7 @@
 """SignalSafe Campus — FastAPI application entry point."""
 
 import logging
+from typing import Any, Dict
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -81,7 +82,21 @@ def health_check():
         "database": "connected",
         "ml_model": _check_ml_status(),
         "virustotal": settings.VT_ENABLED,
+        "urlhaus": _check_urlhaus_status(),
     }
+
+
+def _check_urlhaus_status() -> Dict[str, Any]:
+    try:
+        from app.services.urlhaus_service import URLhausService
+        uh = URLhausService()
+        return {
+            "enabled": uh.is_enabled,
+            "active_urls": uh.total_urls,
+            "active_domains": uh.total_domains,
+        }
+    except Exception:
+        return {"enabled": False, "active_urls": 0}
 
 
 def _check_ml_status() -> str:
@@ -102,4 +117,21 @@ def ml_health():
         return predictor.health_check()
     except Exception as e:
         return {"available": False, "error": str(e)}
+
+
+@app.get("/api/v1/urlhaus/health", tags=["Threat Intel"])
+def urlhaus_health():
+    """URLhaus threat intelligence status."""
+    try:
+        from app.services.urlhaus_service import URLhausService
+        uh = URLhausService()
+        return {
+            "enabled": uh.is_enabled,
+            "total_urls": uh.total_urls,
+            "total_domains": uh.total_domains,
+            "auth_key_configured": bool(settings.URLHAUS_AUTH_KEY),
+            "status": "operational",
+        }
+    except Exception as e:
+        return {"enabled": False, "error": str(e)}
 

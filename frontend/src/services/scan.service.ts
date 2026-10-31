@@ -106,6 +106,8 @@ function clientHeuristicFallback(rawUrl: string): ScanResult {
     vt_suspicious: 0,
     vt_undetected: 0,
     signals,
+    urlhaus_detected: false,
+    urlhaus_reference: null,
     explanation: [
       `Client-side static heuristic assessment (Local Evaluation Mode).`,
       `NOTE: Machine learning classifiers and threat telemetry require an active backend connection. This is a preliminary structural check, not a verified offline certification.`,

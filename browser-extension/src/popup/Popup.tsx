@@ -105,10 +105,10 @@ export function Popup() {
         setState((current) =>
           current
             ? {
-                ...current,
-                error: `Host permission was not granted for ${originFromBaseUrl(baseUrl)}.`,
-                phase: "error",
-              }
+              ...current,
+              error: `Host permission was not granted for ${originFromBaseUrl(baseUrl)}.`,
+              phase: "error",
+            }
             : current
         );
         return;
@@ -129,9 +129,9 @@ export function Popup() {
         setState((current) =>
           current
             ? {
-                ...current,
-                error: `Host permission was not granted for ${originFromBaseUrl(baseUrl)}.`,
-              }
+              ...current,
+              error: `Host permission was not granted for ${originFromBaseUrl(baseUrl)}.`,
+            }
             : current
         );
         return;
@@ -420,8 +420,12 @@ export function Popup() {
                   </article>
                   <article className="lane">
                     <h2>Threat Intel</h2>
-                    <p className="lane-status">{scan.vt_available ? "Active" : "Standard"}</p>
-                    {scan.vt_available ? (
+                      <p className="lane-status" style={scan.urlhaus_detected ? { color: "var(--coral-text)", fontWeight: 700 } : undefined}>
+                        {scan.urlhaus_detected ? "URLhaus HIT" : scan.vt_available ? "VT Active" : "Standard"}
+                      </p>
+                    {scan.urlhaus_detected ? (
+                      <p className="num" style={{ color: "var(--coral-text)", fontWeight: 700 }}>abuse.ch Malware</p>
+                    ) : scan.vt_available ? (
                       <p className="num" title="Malicious / Suspicious / Undetected">
                         <span style={{ color: "var(--coral-text)", fontWeight: 700 }}>{scan.vt_malicious ?? 0}M</span> /{" "}
                         <span style={{ color: "var(--gold-text)", fontWeight: 700 }}>{scan.vt_suspicious ?? 0}S</span>

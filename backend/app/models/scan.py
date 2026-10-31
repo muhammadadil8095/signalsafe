@@ -29,6 +29,8 @@ class ScanHistory(Base):
     vt_malicious = Column(Integer, nullable=False, default=0)
     vt_suspicious = Column(Integer, nullable=False, default=0)
     vt_undetected = Column(Integer, nullable=False, default=0)
+    urlhaus_detected = Column(Boolean, nullable=False, default=False)
+    urlhaus_reference = Column(String(512), nullable=True)
     signals = Column(JSON, nullable=True)
     explanation = Column(JSON, nullable=True)
     recommendations = Column(JSON, nullable=True)

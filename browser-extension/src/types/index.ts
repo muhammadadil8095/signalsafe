@@ -60,6 +60,8 @@ export interface ScanResponse {
   vt_malicious?: number | null;
   vt_suspicious?: number | null;
   vt_undetected?: number | null;
+  urlhaus_detected?: boolean;
+  urlhaus_reference?: string | null;
   signals: Array<Record<string, unknown> | ThreatSignal>;
   explanation: string[];
   recommendations: string[];

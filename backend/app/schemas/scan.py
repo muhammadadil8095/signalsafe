@@ -45,6 +45,8 @@ class ScanResponse(BaseModel):
     vt_malicious: Optional[int] = None
     vt_suspicious: Optional[int] = None
     vt_undetected: Optional[int] = None
+    urlhaus_detected: bool = False
+    urlhaus_reference: Optional[str] = None
     signals: List[Dict[str, Any]] = []
     explanation: List[str] = []
     recommendations: List[str] = []

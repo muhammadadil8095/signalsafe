@@ -135,94 +135,110 @@ export const URLScanner: React.FC = () => {
           </Card>
 
           {/* Tri-Engine Intelligence Breakdown */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Machine Learning Card */}
-            <Card className="p-4 bg-white border border-grid/20 rounded-sm space-y-1.5 shadow-none">
-              <div className="flex items-center justify-between">
-                <div className="text-xs font-mono font-bold uppercase tracking-wider text-forest flex items-center gap-1.5">
-                  <Cpu className="w-3.5 h-3.5" /> AI Classifier
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Machine Learning Card */}
+              <Card className="p-4 bg-white border border-grid/20 rounded-sm space-y-1.5 shadow-none">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-forest flex items-center gap-1.5">
+                    <Cpu className="w-3.5 h-3.5" /> AI Classifier
+                  </div>
+                  <span className={`text-[10px] font-mono tracking-wider uppercase px-1.5 py-0.5 rounded-sm border ${result.ml_available ? 'text-forest bg-mint border-forest/20 font-semibold' : 'text-grid/60 bg-paper-muted border-grid/20'
+                    }`}>
+                    {result.ml_available ? 'ONLINE // LOADED' : 'HEURISTIC FALLBACK'}
+                  </span>
                 </div>
-                <span className={`text-[10px] font-mono tracking-wider uppercase px-1.5 py-0.5 rounded-sm border ${
-                  result.ml_available ? 'text-forest bg-mint border-forest/20 font-semibold' : 'text-grid/60 bg-paper-muted border-grid/20'
-                }`}>
-                  {result.ml_available ? 'ONLINE // LOADED' : 'HEURISTIC FALLBACK'}
-                </span>
-              </div>
-              <p className="text-xs font-mono text-forest/80">
-                PREDICTION: <strong className="text-forest uppercase">{result.ml_prediction || 'Heuristic Fallback'}</strong>
-                {result.ml_confidence !== undefined && result.ml_confidence !== null && (
-                  <span> ({Math.round(result.ml_confidence * 100)}% Confidence)</span>
-                )}
-              </p>
+                <p className="text-xs font-mono text-forest/80">
+                  PREDICTION: <strong className="text-forest uppercase">{result.ml_prediction || 'Heuristic Fallback'}</strong>
+                  {result.ml_confidence !== undefined && result.ml_confidence !== null && (
+                    <span> ({Math.round(result.ml_confidence * 100)}% Confidence)</span>
+                  )}
+                </p>
+              </Card>
+
+              {/* URLhaus Threat Intel Card */}
+              <Card className="p-4 bg-white border border-grid/20 rounded-sm space-y-1.5 shadow-none">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-forest flex items-center gap-1.5">
+                    <ShieldAlert className="w-3.5 h-3.5" /> URLhaus Intel
+                  </div>
+                  <span className={`text-[10px] font-mono tracking-wider uppercase px-1.5 py-0.5 rounded-sm border ${result.urlhaus_detected ? 'text-crimson bg-crimson/10 border-crimson/30 font-semibold' : 'text-forest bg-mint border-forest/20 font-semibold'
+                    }`}>
+                    {result.urlhaus_detected ? 'THREAT DETECTED' : 'FEED ACTIVE'}
+                  </span>
+                </div>
+                <p className="text-xs font-mono text-forest/80">
+                  {result.urlhaus_detected
+                    ? 'CRITICAL: Verified abuse.ch malware distribution vector'
+                    : 'Screened against 170k+ verified abuse.ch threat signatures.'}
+                </p>
+              </Card>
+
+              {/* VirusTotal Card */}
+              <Card className="p-4 bg-white border border-grid/20 rounded-sm space-y-1.5 shadow-none">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs font-mono font-bold uppercase tracking-wider text-forest flex items-center gap-1.5">
+                    <Database className="w-3.5 h-3.5" /> Global Telemetry
+                  </div>
+                  <span className={`text-[10px] font-mono tracking-wider uppercase px-1.5 py-0.5 rounded-sm border ${result.vt_available ? 'text-forest bg-mint border-forest/20 font-semibold' : 'text-grid/60 bg-paper-muted border-grid/20'
+                    }`}>
+                    {result.vt_available ? 'CONNECTED' : 'AUTONOMOUS MODE'}
+                  </span>
+                </div>
+                <p className="text-xs font-mono text-forest/80">
+                  {result.vt_available
+                    ? `Detections: ${result.vt_malicious || 0} engines flagged vector`
+                    : 'Operating locally (offline 27-feature pipeline active).'}
+                </p>
+              </Card>
+            </div>
+
+            {/* Detected Signals Box */}
+            <Card className="p-5 space-y-3 bg-white border border-grid/20 rounded-sm shadow-none">
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-forest flex items-center gap-2">
+                <AlertCircle className="w-3.5 h-3.5" />
+                Detected Evidence & Signals ({result.signals.length})
+              </h3>
+
+              {result.signals.length === 0 ? (
+                <div className="p-3 rounded-sm bg-mint/20 border border-forest/20 text-xs font-mono text-forest flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 shrink-0 text-forest" />
+                  Zero malicious signals detected. Structure conforms to standard web protocols.
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  {result.signals.map((sig, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-sm bg-paper border border-grid/20 flex items-start justify-between gap-3"
+                    >
+                      <div className="space-y-0.5">
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono text-xs font-bold text-forest">{sig.signal_type}</span>
+                          <span className="text-[10px] font-mono text-forest/50 uppercase">[{sig.source}]</span>
+                        </div>
+                        <p className="text-xs font-sans text-forest/80 leading-relaxed">{sig.description}</p>
+                      </div>
+                      <Badge variant="severity" value={sig.severity} />
+                    </div>
+                  ))}
+                </div>
+              )}
             </Card>
 
-            {/* VirusTotal Card */}
-            <Card className="p-4 bg-white border border-grid/20 rounded-sm space-y-1.5 shadow-none">
-              <div className="flex items-center justify-between">
-                <div className="text-xs font-mono font-bold uppercase tracking-wider text-forest flex items-center gap-1.5">
-                  <Database className="w-3.5 h-3.5" /> Global Telemetry
-                </div>
-                <span className={`text-[10px] font-mono tracking-wider uppercase px-1.5 py-0.5 rounded-sm border ${
-                  result.vt_available ? 'text-forest bg-mint border-forest/20 font-semibold' : 'text-grid/60 bg-paper-muted border-grid/20'
-                }`}>
-                  {result.vt_available ? 'CONNECTED' : 'AUTONOMOUS MODE'}
-                </span>
-              </div>
-              <p className="text-xs font-mono text-forest/80">
-                {result.vt_available
-                  ? `Detections: ${result.vt_malicious || 0} engines flagged vector`
-                  : 'Operating locally (offline 27-feature pipeline active).'}
-              </p>
+            {/* Security Recommendations */}
+            <Card className="p-5 space-y-2 bg-paper border border-grid/20 rounded-sm shadow-none">
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-forest">Recommended Actions</h3>
+              <ul className="space-y-1.5 text-xs font-sans text-forest/80">
+                {result.recommendations.map((rec, idx) => (
+                  <li key={idx} className="flex items-start gap-2">
+                    <ArrowRight className="w-3.5 h-3.5 text-forest shrink-0 mt-0.5" />
+                    <span>{rec}</span>
+                  </li>
+                ))}
+              </ul>
             </Card>
           </div>
-
-          {/* Detected Signals Box */}
-          <Card className="p-5 space-y-3 bg-white border border-grid/20 rounded-sm shadow-none">
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-forest flex items-center gap-2">
-              <AlertCircle className="w-3.5 h-3.5" />
-              Detected Evidence & Signals ({result.signals.length})
-            </h3>
-
-            {result.signals.length === 0 ? (
-              <div className="p-3 rounded-sm bg-mint/20 border border-forest/20 text-xs font-mono text-forest flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 shrink-0 text-forest" />
-                Zero malicious signals detected. Structure conforms to standard web protocols.
-              </div>
-            ) : (
-              <div className="space-y-1.5">
-                {result.signals.map((sig, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3 rounded-sm bg-paper border border-grid/20 flex items-start justify-between gap-3"
-                  >
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-forest">{sig.signal_type}</span>
-                        <span className="text-[10px] font-mono text-forest/50 uppercase">[{sig.source}]</span>
-                      </div>
-                      <p className="text-xs font-sans text-forest/80 leading-relaxed">{sig.description}</p>
-                    </div>
-                    <Badge variant="severity" value={sig.severity} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </Card>
-
-          {/* Security Recommendations */}
-          <Card className="p-5 space-y-2 bg-paper border border-grid/20 rounded-sm shadow-none">
-            <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-forest">Recommended Actions</h3>
-            <ul className="space-y-1.5 text-xs font-sans text-forest/80">
-              {result.recommendations.map((rec, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <ArrowRight className="w-3.5 h-3.5 text-forest shrink-0 mt-0.5" />
-                  <span>{rec}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </div>
       )}
-    </div>
-  );
+        </div>
+      );
 };

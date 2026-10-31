@@ -7,7 +7,7 @@ SignalSafe Campus is an AI-powered cybersecurity platform that protects students
 
 ## Key Features
 
-- **URL Threat Scanner**: Multi-signal detection engine fusing static heuristic indicators, machine learning classifications (27 extracted features), and optional VirusTotal v3 intelligence.
+- **URL Threat Scanner**: Multi-signal detection engine fusing static heuristic indicators, machine learning classifications (27 extracted features), abuse.ch URLhaus threat intelligence (170,000+ malware indicators), and optional VirusTotal v3 intelligence.
 - **QR Code Security Scanner (Quishing)**: Decode campus poster QR codes via live camera or image file upload, and inspect destination safety without auto-navigating.
 - **Message Analyzer**: Identifies urgency markers, credential harvesting phrases, fake IT department alerts, and fraudulent payment channels.
 - **Attachment Static Inspector**: Safe structural parsing of PDF and HTML attachments detecting embedded scripts, launch actions, hidden iframes, and credential inputs.

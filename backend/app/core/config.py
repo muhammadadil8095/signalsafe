@@ -24,6 +24,11 @@ class Settings(BaseSettings):
     VT_TIMEOUT: int = 30
     VT_RATE_LIMIT: int = 4
 
+    # URLhaus Integration (abuse.ch)
+    URLHAUS_ENABLED: bool = True
+    URLHAUS_AUTH_KEY: Optional[str] = None
+    URLHAUS_TIMEOUT: int = 5
+
     # File Upload
     MAX_UPLOAD_SIZE: int = 10 * 1024 * 1024  # 10 MB
     ALLOWED_EXTENSIONS: list = [".pdf", ".html", ".htm"]

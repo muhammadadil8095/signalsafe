@@ -301,7 +301,55 @@ Implemented in [`backend/app/services/virustotal_service.py`](file:///e:/SignalS
 
 ---
 
-### 4.4 Risk Fusion Engine & Mathematical Scoring Model
+### 4.4 abuse.ch URLhaus Threat Intelligence Engine (Sub-Millisecond Dual-Layer)
+Implemented in [`backend/app/services/urlhaus_service.py`](file:///e:/SignalSafe-Campus-main/backend/app/services/urlhaus_service.py) with offline/active compressed indicators stored in [`backend/app/data/urlhaus_signatures.json.gz`](file:///e:/SignalSafe-Campus-main/backend/app/data/urlhaus_signatures.json.gz):
+
+URLhaus is an open community cyber threat intelligence project operated by **abuse.ch** that tracks, verifies, and disseminates malicious URLs used for malware distribution, botnet command & control (C2), and credential-harvesting attacks.
+
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│               URLHAUS THREAT INTELLIGENCE INGESTION & PIPELINE         │
+│                                                                        │
+│   [LegitPhish Mendeley Dataset]     [abuse.ch Daily Syndication Feed] │
+│     63,466 Malicious URLs             109,182 Active URLs              │
+│     26,105 Malicious Domains           16,143 Active Domains           │
+│                    │                                │                  │
+│                    └────────────────┬───────────────┘                  │
+│                                     ▼                                  │
+│                     Compaction Pipeline (Gzip JSON)                    │
+│                     170,903 URLs  |  43,993 Domains                    │
+│                                     │                                  │
+│                                     ▼                                  │
+│                     Fast In-Memory Exact & Host Match                  │
+│                        Lookup Time: < 20 microseconds                  │
+│                                     │                                  │
+│                     (Optional) abuse.ch Auth-Key API                   │
+│                     GET https://urlhaus-api.abuse.ch/v1/url/          │
+│                                     │                                  │
+│                                     ▼                                  │
+│                     Risk Engine Enforcement (Score >= 90)              │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+#### Dual-Layer Architecture:
+1. **Ultra-Fast Local Threat Database (Zero External Network Delay)**:
+   - Compressed archive (`urlhaus_signatures.json.gz`, 4.13 MB) decompressed into Python `set` collections at service initialization.
+   - Evaluates:
+     - Exact normalized URL matches (including and excluding schemes `http://` / `https://` and trailing slashes).
+     - Domain and root-host matches against 43,993 malicious domains.
+   - Typical query latency: **$< 0.05 \text{ ms}$**, eliminating network bottlenecks during real-time web browsing inspection.
+2. **Dynamic abuse.ch API Verification**:
+   - For novel or recently registered indicators, queries `https://urlhaus-api.abuse.ch/v1/url/` using `URLHAUS_AUTH_KEY` when configured.
+   - Cached locally in an LRU memory dictionary to prevent redundant external API calls.
+3. **Deterministic Risk Override**:
+   - A verified URLhaus match represents confirmed malware payload infrastructure. When detected:
+     - Appends `urlhaus_malicious` critical signal.
+     - Automatically clamps `risk_score = max(risk_score, 90.0)` (verdict: `malicious`).
+     - Provides an authoritative audit link (`https://urlhaus.abuse.ch/browse/?search=...`).
+
+---
+
+### 4.5 Risk Fusion Engine & Mathematical Scoring Model
 Implemented in [`backend/app/services/scan_service.py`](file:///e:/SignalSafe-Campus-main/backend/app/services/scan_service.py):
 
 The final risk score $S \in [0, 100]$ is computed by synthesizing heuristic signals, machine learning confidence, and optional VirusTotal intelligence:

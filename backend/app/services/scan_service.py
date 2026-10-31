@@ -162,6 +162,10 @@ def _generate_recommendations(
         recommendations.append(
             "The URL contains excessive subdomains, which may be used to impersonate legitimate sites."
         )
+    if "urlhaus_malicious" in signal_types:
+        recommendations.append(
+            "CRITICAL: This address is verified in the abuse.ch URLhaus malware database. Do NOT visit."
+        )
 
     return recommendations
 
@@ -224,6 +228,35 @@ def create_url_scan(db: Session, user_id: UUID, url: str) -> ScanHistory:
         logger.info("MLPredictor not available, ML prediction disabled")
     except Exception as e:
         logger.warning(f"ML prediction failed (non-critical): {e}")
+
+    # Step 3.5: Try URLhaus threat intel lookup (abuse.ch verified malware database)
+    urlhaus_detected = False
+    urlhaus_reference: Optional[str] = None
+    try:
+        from app.services.urlhaus_service import URLhausService
+
+        uh_service = URLhausService()
+        if uh_service.is_enabled:
+            uh_result = uh_service.lookup_url(url)
+            if not uh_result and normalized_url != url:
+                uh_result = uh_service.lookup_url(normalized_url)
+
+            if uh_result and uh_result.get("detected"):
+                urlhaus_detected = True
+                urlhaus_reference = uh_result.get("reference")
+                threat_desc = uh_result.get("details") or f"URLhaus: Active malware payload detected ({uh_result.get('threat', 'malware')})"
+                all_signals.append(
+                    {
+                        "signal_type": "urlhaus_malicious",
+                        "description": threat_desc,
+                        "severity": "critical",
+                        "source": "urlhaus",
+                    }
+                )
+    except ImportError:
+        logger.info("URLhausService not available, skipping URLhaus check")
+    except Exception as e:
+        logger.warning(f"URLhaus threat lookup failed (non-critical): {e}")
 
     # Step 4: Try VirusTotal lookup (if enabled, graceful fallback)
     vt_available = False
@@ -288,6 +321,10 @@ def create_url_scan(db: Session, user_id: UUID, url: str) -> ScanHistory:
     elif ml_available and ml_prediction == "suspicious" and ml_confidence is not None:
         risk_score += ml_confidence * 25.0
 
+    # Definite threat override if verified in abuse.ch URLhaus malware database
+    if urlhaus_detected:
+        risk_score = max(risk_score, 90.0)
+
     # Cap the score at 100
     risk_score = min(round(risk_score, 2), 100.0)
 
@@ -318,6 +355,8 @@ def create_url_scan(db: Session, user_id: UUID, url: str) -> ScanHistory:
         vt_malicious=vt_malicious,
         vt_suspicious=vt_suspicious,
         vt_undetected=vt_undetected,
+        urlhaus_detected=urlhaus_detected,
+        urlhaus_reference=urlhaus_reference,
         signals=all_signals,
         explanation=explanations,
         recommendations=recommendations,
