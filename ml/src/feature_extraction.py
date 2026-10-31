@@ -172,8 +172,22 @@ class URLFeatureExtractor:
 
         return features
 
-    def extract_batch(self, urls: List[str]):
-        """Extract features for multiple URLs into a pandas DataFrame."""
+    def extract_batch(self, urls: List[str], n_jobs: int = -1):
+        """Extract features for multiple URLs into a pandas DataFrame using parallel processing."""
         import pandas as pd
-        rows = [self.extract(u) for u in urls]
+        
+        # Strip and clean
+        cleaned_urls = [str(u).strip() if pd.notna(u) else "" for u in urls]
+        
+        if n_jobs == 1 or len(cleaned_urls) < 200:
+            rows = [self.extract(u) for u in cleaned_urls]
+        else:
+            try:
+                from joblib import Parallel, delayed
+                rows = Parallel(n_jobs=n_jobs, batch_size=500)(
+                    delayed(self.extract)(u) for u in cleaned_urls
+                )
+            except Exception:
+                rows = [self.extract(u) for u in cleaned_urls]
+                
         return pd.DataFrame(rows)

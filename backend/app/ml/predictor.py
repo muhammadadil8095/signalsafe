@@ -71,10 +71,12 @@ class MLPredictor:
         features = self._pipeline.extract(url)
         feature_names = self._pipeline.get_feature_names()
         feature_values = [features.get(name, 0.0) for name in feature_names]
-        feature_array = np.array([feature_values])
+        
+        import pandas as pd
+        feature_df = pd.DataFrame([feature_values], columns=feature_names)
 
-        prediction = self._model.predict(feature_array)[0]
-        probabilities = self._model.predict_proba(feature_array)[0]
+        prediction = self._model.predict(feature_df)[0]
+        probabilities = self._model.predict_proba(feature_df)[0]
         confidence = float(max(probabilities))
 
         return {

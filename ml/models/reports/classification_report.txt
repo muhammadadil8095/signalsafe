@@ -1,11 +1,16 @@
 Model: RandomForest
-Dataset: ml/datasets/sample_urls.csv
+Dataset: E:\SignalSafe-Campus-main\ml\datasets\legitphish_mendeley.csv
+Total Samples: 100872
 
               precision    recall  f1-score   support
 
-  legitimate       1.00      1.00      1.00         3
-    phishing       1.00      1.00      1.00         3
+  legitimate       1.00      1.00      1.00      7476
+    phishing       1.00      1.00      1.00     12699
 
-    accuracy                           1.00         6
-   macro avg       1.00      1.00      1.00         6
-weighted avg       1.00      1.00      1.00         6
+    accuracy                           1.00     20175
+   macro avg       1.00      1.00      1.00     20175
+weighted avg       1.00      1.00      1.00     20175
+
+Confusion Matrix (labels=['legitimate', 'phishing']):
+  TN=7459, FP=17
+  FN=3, TP=12696
