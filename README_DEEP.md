@@ -260,9 +260,21 @@ Implemented in [`ml/src/feature_extraction.py`](file:///e:/SignalSafe-Campus-mai
 ```
 
 #### Training & Inference Architecture
-- **Algorithm**: Random Forest Classifier with 150 Estimators, Gini impurity criterion, and max depth bounded to prevent overfitting on specific brand names.
-- **Pipeline Packaging**: Features are extracted, scaled, and serialized using `joblib` into `ml/models/url_phishing_model.joblib` and `ml/models/feature_pipeline.joblib`.
-- **Fault-Tolerant Predictor**: The backend `MLPredictor` (`backend/app/ml/predictor.py`) initializes at FastAPI application startup. If model files are absent, it gracefully logs `"not_available"`, allowing the heuristic and VirusTotal layers to continue operating uninterrupted.
+- **Algorithm**: `RandomForestClassifier` (100 Estimators, max depth 15, balanced class weights, parallel execution `n_jobs=-1`).
+- **Training Dataset (Mendeley LegitPhish Dataset `hx4m73v2sf/2`)**:
+  - Trained on **100,872 verified URLs** (63,492 active malicious phishing URLs collected from URLHaus and verified threat feeds; 37,380 legitimate URLs sampled from high-reputation domains like Wikipedia, StackOverflow, and academic institutions).
+  - High-speed parallel feature extraction pipeline (`extract_batch` with `n_jobs=-1`, batch size 500) processing $>1,600\text{ URLs/sec}$.
+  - Supports automatic column mapping (`url`/`link`, `label`/`ClassLabel`), universal binary label conversion (`0` = phishing, `1` = legitimate), and optional stratified sampling (`--sample-size 25000`) for sub-3-minute training.
+- **Model Evaluation Metrics (Test Set: 20,175 Samples)**:
+  - **Accuracy**: **99.90%**
+  - **Precision**: **99.90%** (Weighted)
+  - **Recall**: **99.90%** (Weighted)
+  - **F1-Score**: **99.90%** (Weighted)
+  - **Confusion Matrix** (labels: `['legitimate', 'phishing']`):
+    - True Negatives (TN): **7,459** | False Positives (FP): **17**
+    - False Negatives (FN): **3** | True Positives (TP): **12,696**
+- **Pipeline Packaging**: Features are extracted, scaled, and serialized using `joblib` into [`ml/models/url_phishing_model.joblib`](file:///e:/SignalSafe-Campus-main/ml/models/url_phishing_model.joblib) and [`ml/models/feature_pipeline.joblib`](file:///e:/SignalSafe-Campus-main/ml/models/feature_pipeline.joblib).
+- **Fault-Tolerant Predictor**: The backend `MLPredictor` ([`backend/app/ml/predictor.py`](file:///e:/SignalSafe-Campus-main/backend/app/ml/predictor.py)) initializes at FastAPI application startup, structuring inference requests as labeled feature DataFrames to eliminate scikit-learn warnings, and gracefully falling back to heuristic evaluation if model artifacts are absent.
 
 ---
 
@@ -292,34 +304,41 @@ Implemented in [`backend/app/services/virustotal_service.py`](file:///e:/SignalS
 ### 4.4 Risk Fusion Engine & Mathematical Scoring Model
 Implemented in [`backend/app/services/scan_service.py`](file:///e:/SignalSafe-Campus-main/backend/app/services/scan_service.py):
 
-The final risk score $S \in [0, 100]$ is computed by synthesizing signals across all active analyzers:
+The final risk score $S \in [0, 100]$ is computed by synthesizing heuristic signals, machine learning confidence, and optional VirusTotal intelligence:
 
-$$S = \text{clamp}\left( W_{\text{heur}} \cdot S_{\text{heur}} + W_{\text{ml}} \cdot S_{\text{ml}} + W_{\text{vt}} \cdot S_{\text{vt}}, 0, 100 \right)$$
+$$S = \min\left(100.0, \; \sum_{i \in \text{Signals}} W(i) + S_{\text{ML}} \right)$$
 
-Where:
-- **Heuristic Component ($S_{\text{heur}}$)**:
-  Base score calculated from signal severity weights:
-  - Critical severity signal: $+45$ points
-  - High severity signal: $+30$ points
-  - Medium severity signal: $+15$ points
-  - Low severity signal: $+5$ points
-- **Machine Learning Component ($S_{\text{ml}}$)**:
-  Normalized probability from the Random Forest model:
-  $$S_{\text{ml}} = P(\text{phishing}) \times 100$$
-- **VirusTotal Component ($S_{\text{vt}}$)**:
-  $$S_{\text{vt}} = \min(100, (\text{malicious} \times 25) + (\text{suspicious} \times 10))$$
+#### 1. Signal Severity Base Weights
+- **Critical Severity Signal**: $+70.0$ points (e.g. data URI injection, explicit credential interception)
+- **High Severity Signal**: $+45.0$ points (e.g. brand impersonation, embedded user authority `@` symbol)
+- **Medium Severity Signal**: $+25.0$ points (e.g. suspicious TLDs, excessive subdomains $\ge 3$)
+- **Low Severity Signal**: $+10.0$ points (e.g. non-standard port, minor structural anomalies)
 
-#### Final Verdict Boundaries
+#### 2. False Positive Damping for Long URLs (80% Weight Reduction)
+Campus environments frequently generate exceptionally long legitimate URLs (e.g., Canvas LMS deep course modules, Google Drive share links, Zoom registration tokens, JSTOR academic citations). 
+To prevent long URLs from causing false-positive warnings, SignalSafe implements an explicit **80% weight reduction** for length-related signals:
+```python
+if signal.get("signal_type") in ("long_url", "abnormal_url_length"):
+    weight *= 0.2  # Retain only 20% of original severity weight
 ```
- 0                    40                    70                   100
- ├─────────────────────┼─────────────────────┼─────────────────────┤
- │        SAFE         │     SUSPICIOUS      │      MALICIOUS      │
- └─────────────────────┴─────────────────────┴─────────────────────┘
+
+#### 3. Machine Learning Score Augmentation ($S_{\text{ML}}$)
+- If model predicts **`phishing`** or **`malicious`**:
+  $$S_{\text{ML}} = \text{confidence} \times 50.0$$
+- If model predicts **`suspicious`**:
+  $$S_{\text{ML}} = \text{confidence} \times 25.0$$
+- If model predicts **`legitimate`**: $+0.0$ points (clean baseline verified).
+
+#### 4. Final Verdict Boundaries
 ```
-- **SAFE ($0 \le S < 40$)**: No confirmed malicious indicators detected.
-- **SUSPICIOUS ($40 \le S < 70$)**: Multiple heuristic anomalies or low-confidence threat signals detected.
-- **MALICIOUS ($70 \le S \le 100$)**: Definite phishing patterns, brand impersonation, high ML confidence, or positive VirusTotal vendor detections.
-- **INCONCLUSIVE**: Unreachable target, malformed input, or analyzer failure.
+ 0                     25                    60                   100
+ ├──────────────────────┼─────────────────────┼─────────────────────┤
+ │         SAFE         │     SUSPICIOUS      │      MALICIOUS      │
+ └──────────────────────┴─────────────────────┴─────────────────────┘
+```
+- **SAFE ($0 \le S < 25$)**: Normal legitimate destination. All signals clear.
+- **SUSPICIOUS ($25 \le S \le 60$)**: Elevated caution required. Multiple structural anomalies or moderate ML uncertainty.
+- **MALICIOUS ($S > 60$)**: High-severity threat detected. Blocked by browser guardian and flagged for incident escalation.
 
 ---
 
@@ -359,12 +378,17 @@ Implemented in [`frontend/src/pages/dashboard/QRScanner.tsx`](file:///e:/SignalS
 ```
 
 1. **Dual Ingestion Channels**:
-   - **Live Video Scanner**: Accesses device camera streams via `navigator.mediaDevices.getUserMedia` with video facing mode set to `"environment"`. Captures video frames continuously into an HTML5 Canvas at 30 fps.
-   - **Image Upload File Processor**: Accepts drag-and-drop or file upload of JPEG, PNG, or WebP files, rendering image bitmaps onto an offline canvas element.
+   - **Active Live Video Scanner**: Connects directly to hardware camera streams via `navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })`. Incorporates automated stream attachment hooks with `<video autoPlay playsInline muted>` and `onLoadedMetadata` event listeners, eliminating white/blank screen freezes. Includes camera orientation toggles, video track management, and fallback canvas polling at 30 fps.
+   - **Direct Image File Upload Processor**: Ingests uploaded PNG, JPEG, or WebP files, rendering image bitmaps onto a high-DPI canvas context and processing byte buffers through `jsQR`.
 2. **Deterministic Barcode Decoding**:
    Utilizes `jsQR` to locate finder patterns, extract timing lines, and decode Reed-Solomon error-corrected byte streams without browser navigation.
-3. **Zero Auto-Navigation Guarantee**:
-   The application intentionally **never** opens the decoded URL in a browser tab. Instead, the raw string is presented in a sanitized preview, and an automatic scan request is dispatched to `/api/v1/scans/url`.
+3. **Transparent Destination Inspection & Zero Auto-Navigation**:
+   - The application **never auto-redirects or launches the browser** to decoded QR destinations.
+   - Decoded results are rendered in a dedicated Destination Inspection Card displaying:
+     - Full extracted URL and resolved root domain.
+     - Categorical risk badge (`SAFE`, `SUSPICIOUS`, `MALICIOUS`).
+     - Real-time threat signal tags (e.g. `known_url_shortener`, `brand_impersonation`, `suspicious_tld`).
+     - Plain-language risk explanations and actionable campus recommendations before any user action.
 
 ---
 
@@ -554,8 +578,12 @@ If the student or an automated script attempts to access that domain again, the 
 
 ---
 
-### 6.7 Student-Centric Security Dashboard & State Machine
-The toolbar popup (`src/popup/Popup.tsx`) provides an accessible cybersecurity dashboard:
+### 6.7 Student-Centric Security Dashboard & Design System Parity
+The toolbar popup (`src/popup/Popup.tsx`) and scanning result views are built in visual parity with the main SignalSafe web platform:
+
+- **Unified Visual Identity**: Formatted using the web platform's modern dark theme tokens (`#0a0f1d` deep canvas, `#1e293b` frosted borders, emerald safe indicators `#10b981`, amber caution `#f59e0b`, and crimson threat badges `#ef4444`).
+- **Dynamic Risk Gauge**: Renders an animated score bar matching the backend risk categorization ($0-100$).
+- **Micro-Badges & Telemetry Cards**: Clean card layouts displaying AI Security classification (e.g. 99% confidence), VirusTotal engine consensus, and specific heuristic threat flags.
 
 ```
 ┌──────────────────────────────────────────┐
@@ -757,8 +785,20 @@ Implemented in [`frontend/`](file:///e:/SignalSafe-Campus-main/frontend) using R
 - **Service Worker Lifecycle**: Caches core shell assets (HTML, CSS, JS, fonts) enabling instant loading and offline educational guidance.
 - **InstallPwaButton Component**: Prompts students to add SignalSafe to their home screens for instant QR scanning and emergency security reporting.
 
-### 2. Design System & Accessibility
-- **Theming**: Dark and Light themes managed via `ThemeContext` (`#0a0e14` charcoal canvas with emerald, cyan, amber, and crimson indicators).
+### 2. Multi-Theme Engine & Real-Time Sync
+- **ThemeContext Subsystem**: Multi-theme architecture allowing instantaneous switching between **Dark** and **Light** modes.
+- **Theme Persistence**: User preferences are automatically persisted to `localStorage` and synchronized across tabs without page reloads.
+- **Visual Palette**:
+  - *Dark Mode*: High-contrast obsidian canvas (`#0a0f1d`) with glowing emerald, cyan, amber, and crimson telemetry badges.
+  - *Light Mode*: Clean zinc/slate surfaces (`#f8fafc`) with subtle borders and balanced contrast ratios meeting WCAG AA standards.
+
+### 3. Production Data Architecture (Zero Dummy Data)
+All placeholder and mock arrays across the platform were eliminated and replaced with live backend telemetry:
+- **Student Dashboard**: Live scan history, personalized threat alerts, and real-time statistics fetched directly from `/api/v1/scans/history`.
+- **Faculty Dashboard**: Live department scan metrics, incident reporting feeds, and verified URL status tracking.
+- **Security Admin Portal**: Real-time user management, live database audit logs (`/api/v1/admin/audit-logs`), and dynamic security incident state triage.
+
+### 4. Typography & Accessibility
 - **Typography**: Inter and JetBrains Mono / Red Hat Mono font pairings for high technical legibility.
 - **ARIA Compliance**: Role attributes, live regions (`aria-live="polite"`), and focus management for screen reader accessibility.
 
@@ -932,6 +972,14 @@ Google Chrome and Microsoft Edge Manifest V3 do not allow extensions to pause in
    npm run build
    ```
    Load `browser-extension/dist` as an unpacked extension in `chrome://extensions`.
+4. **Machine Learning Model Training Pipeline**:
+   ```bash
+   # Train on full 100,872 verified Mendeley LegitPhish dataset
+   python -m ml.src.train --dataset ml/datasets/legitphish_mendeley.csv --output ml/models/
+
+   # Fast-train mode with stratified downsampling (25,000 samples, ~2-3 minutes)
+   python -m ml.src.train --dataset ml/datasets/legitphish_mendeley.csv --sample-size 25000 --output ml/models/
+   ```
 
 ### Default Seed Accounts
 - **Administrator**: `admin@signalsafe.edu` / `admin123`
